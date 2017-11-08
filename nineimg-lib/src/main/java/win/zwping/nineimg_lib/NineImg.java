@@ -13,7 +13,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -63,8 +62,7 @@ public class NineImg extends RelativeLayout {
     private ArrayList<String> data;
     private float width;
     private int loadingImg, errorImg;
-
-    public static ImageLoaderInterface imageLoader;
+//    public static ImageLoaderInterface imageLoader;
 
     /**
      * 自动设置图片大小（根据图片数量设置图片的宽高，默认为1/3宽度）
@@ -108,7 +106,7 @@ public class NineImg extends RelativeLayout {
     //<editor-fold desc="API">
 
     public void setImageLoader(ImageLoaderInterface imageLoader) {
-        NineImg.imageLoader = imageLoader;
+//        NineImg.imageLoader = imageLoader;
     }
 
     /**
@@ -162,10 +160,7 @@ public class NineImg extends RelativeLayout {
                 holder.imageView.getLayoutParams().width = (int) ((width - (((getColumn() - 1) * dividerSize))) / (getColumn() == 1 ? 2.5f : 3));
                 holder.imageView.setLayoutParams(holder.imageView.getLayoutParams());
             }
-//            holder.imageView.displayImage(data.get(position));
-            if (null != imageLoader) {
-                imageLoader.displayImage(getContext(), data.get(position), holder.imageView);
-            }
+            holder.imageView.displayImage(data.get(position));
             holder.itemView.setTag(position);
         }
 
@@ -206,17 +201,17 @@ public class NineImg extends RelativeLayout {
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imageView;
+        private PImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.nine_img_img);
-//            if (0 != loadingImg) {
-//                imageView.setLoadingImg(loadingImg);
-//            }
-//            if (0 != errorImg) {
-//                imageView.setErrorImg(errorImg);
-//            }
+            if (0 != loadingImg) {
+                imageView.setLoadingImg(loadingImg);
+            }
+            if (0 != errorImg) {
+                imageView.setErrorImg(errorImg);
+            }
         }
     }
     //</editor-fold>

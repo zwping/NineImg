@@ -1,6 +1,5 @@
 package win.zwping.nineimg;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -15,15 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import ch.ielse.view.imagewatcher.ImageWatcher;
 import win.zwping.nineimg_lib.NineImg;
-import win.zwping.nineimg_lib.i.ImageLoaderInterface;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,18 +30,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setBackgroundDrawable(null);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            View decoderView = getWindow().getDecorView();
+//            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+//            decoderView.setSystemUiVisibility(option);
+//            getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        } else {
+//            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+//            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+//            //or ?
+////            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         nineImg = findViewById(R.id.nine_img);
         recyclerView = findViewById(R.id.recycler);
-
-        nineImg.setImageLoader(new ImageLoaderInterface() {
-            @Override
-            public void displayImage(Context context, Object path, ImageView imageView) {
-                Glide.with(MainActivity.this).load(path).asBitmap().into(imageView);
-            }
-        });
 
 //        ArrayList<String> list = new ArrayList<String>();
 //        for (int i = 0; i < 9; i++) {
