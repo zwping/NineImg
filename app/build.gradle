@@ -29,6 +29,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation project(':nineimg-lib')
+    compile 'com.github.bumptech.glide:glide:3.8.0'
 
     compile 'ch.ielse:imagewatcher:1.0.3'  //需要参考一下这个
 }
