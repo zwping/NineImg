@@ -110,6 +110,17 @@ public class NineImg extends RelativeLayout {
     }
 
     /**
+     * 设置过渡图片
+     *
+     * @param loadingImgResId 不需要可填写0
+     * @param errorImgResId   不需要可填写0
+     */
+    public void setPlaceholder(int loadingImgResId, int errorImgResId) {
+        this.loadingImg = loadingImgResId;
+        this.errorImg = errorImgResId;
+    }
+
+    /**
      * 设置资源
      *
      * @param layoutWidth
@@ -178,6 +189,8 @@ public class NineImg extends RelativeLayout {
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("list", data);
                 bundle.putInt("currentPosition", (Integer) v.getTag());
+                bundle.putInt("loadingImg", loadingImg);
+                bundle.putInt("errorImg", errorImg);
 
                 Intent intent = new Intent(fromActivity, DisplayNineImgActivity.class);
                 intent.putExtras(bundle);
@@ -206,6 +219,7 @@ public class NineImg extends RelativeLayout {
         public ViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.nine_img_img);
+            imageView.showGifFlag();
             if (0 != loadingImg) {
                 imageView.setLoadingImg(loadingImg);
             }

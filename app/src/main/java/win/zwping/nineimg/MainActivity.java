@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+//            holder.nineImg.setPlaceholder(R.mipmap.error_picture,R.mipmap.error_picture);
             holder.nineImg.setList(1080, lists.get(position));
 
             holder.nineImg.setDisplay(true, MainActivity.this);

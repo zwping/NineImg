@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -27,16 +28,20 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
     private List<String> list;
     private int position;
 
+    private int loadingImg, errorImg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          /*set it to be no title*/
         requestWindowFeature(Window.FEATURE_NO_TITLE);
          /*set it to be full screen*/
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_display_nine_img);
         position = getIntent().getExtras().getInt("currentPosition");
         list = getIntent().getExtras().getStringArrayList("list");
+        this.loadingImg = getIntent().getExtras().getInt("loadingImg");
+        this.errorImg = getIntent().getExtras().getInt("errorImg");
 
         viewPager = findViewById(R.id.viewpager);
         textView = findViewById(R.id.number);
@@ -69,6 +74,14 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
         public Object instantiateItem(ViewGroup container, int position) {
             PImageView imageView = new PImageView(DisplayNineImgActivity.this);
             imageView.setBigModel();
+            imageView.showGifFlag();
+            imageView.playerGif(true);
+            if (0 != loadingImg) {
+                imageView.setLoadingImg(loadingImg);
+            }
+            if (0 != errorImg) {
+                imageView.setErrorImg(errorImg);
+            }
             imageView.display(list.get(position));
             container.addView(imageView);
             return imageView;
