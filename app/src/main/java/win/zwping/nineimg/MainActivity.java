@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 9; i++) {
             list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
         }
+        nineImg.setAutoSize(true);
         nineImg.setList(list);
 
 //        lists.add(list);
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 //        adapter.notifyDataSetChanged();
 
         ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < new Random().nextInt(9) + 3; i++) {
+        for (int i = 0; i < new Random().nextInt(2) + 1; i++) {
             list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
         }
         nineImg.setList(list);

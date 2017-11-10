@@ -1,7 +1,6 @@
 package win.zwping.nineimg_lib;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -13,22 +12,19 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
-import win.zwping.nineimg_lib.i.ImageLoaderInterface;
 import win.zwping.nineimg_lib.i.OnItemClickListener;
 import win.zwping.nineimg_lib.view.GridSpacingItemDecoration;
 import win.zwping.plib.frame.PImageView;
 
 /**
- * <p>describe：
+ * <p>describe：使用recyclerView使用9图功能
  * <p>    note：
  * <p> @author：zwp on 2017/10/31 mail：1101558280@qq.com web: http://www.zwping.win </p>
  * <p>
- * 兼容性bug{@link #setAutoSize(boolean)}，使用流式布局展示兼容性更好，ps：时间不够
  */
 public class NineImg extends RelativeLayout {
 
@@ -133,21 +129,24 @@ public class NineImg extends RelativeLayout {
     //</editor-fold>
     //<editor-fold desc="API">
 
-
     /**
      * 设置资源
      *
-     * @param list 与 {@link #setAutoSize(boolean)}冲突，如果开启了autoSize，就不可以更改list数量了
+     * @param list
      */
     public void setList(final ArrayList<String> list) {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                width = getWidth();
-                data = list;
-                notifyData();
-            }
-        });
+        data = list;
+        if (0 == width) {
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    width = getWidth();
+                    notifyData();
+                }
+            });
+        } else {
+            notifyData();
+        }
     }
 
     /**
@@ -164,7 +163,7 @@ public class NineImg extends RelativeLayout {
     /**
      * 根据图片数量，自动调整图片大小
      *
-     * @param autoSize 与 {@link #setList(ArrayList)} 冲突
+     * @param autoSize
      */
     public void setAutoSize(boolean autoSize) {
         this.autoSize = autoSize;
