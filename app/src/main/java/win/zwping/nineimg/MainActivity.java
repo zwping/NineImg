@@ -48,16 +48,16 @@ public class MainActivity extends AppCompatActivity {
         nineImg = findViewById(R.id.nine_img);
         recyclerView = findViewById(R.id.recycler);
 
-//        ArrayList<String> list = new ArrayList<String>();
-//        for (int i = 0; i < 9; i++) {
-//            list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
-//        }
-//        nineImg.setList(1080, list);
+        ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < 9; i++) {
+            list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
+        }
+        nineImg.setList(list);
 
 //        lists.add(list);
         for (int i = 0; i < 10; i++) {
             ArrayList<String> list1 = new ArrayList<>();
-            for (int i1 = 0; i1 < (new Random().nextBoolean() ? 1 : new Random().nextInt(8) + 1); i1++) {
+            for (int i1 = 0; i1 < (new Random().nextInt(8) + 3); i1++) {
                 if (new Random().nextBoolean()) {
                     list1.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
                 } else if (new Random().nextBoolean()) {
@@ -83,8 +83,13 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //            lists.add(list1);
 //        }
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
 
+        ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < new Random().nextInt(9) + 3; i++) {
+            list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
+        }
+        nineImg.setList(list);
     }
 
     private List<ArrayList<String>> lists = new ArrayList<>();
@@ -99,9 +104,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
 //            holder.nineImg.setPlaceholder(R.mipmap.error_picture,R.mipmap.error_picture);
-            holder.nineImg.setList(1080, lists.get(position));
+            holder.nineImg.setList(lists.get(position));
 
-            holder.nineImg.setDisplay(true, MainActivity.this);
+            holder.nineImg.setBigImgDisplay(true, MainActivity.this);
             holder.nineImg.setAutoSize(true);
             holder.textView.setText(position + "------");
         }

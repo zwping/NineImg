@@ -64,7 +64,6 @@ public class NineImg extends RelativeLayout {
     private ArrayList<String> data;
     private float width;
     private int loadingImg, errorImg;
-//    public static ImageLoaderInterface imageLoader;
 
     /**
      * 自动设置图片大小（根据图片数量设置图片的宽高，默认为1/3宽度）
@@ -75,8 +74,21 @@ public class NineImg extends RelativeLayout {
      */
     private int dividerSize = 2;
 
+    /**
+     * 子控件的监听
+     */
+    private OnItemClickListener onItemClickListener;
+    /**
+     * 展示大图
+     */
+    private boolean displayBigImg;
+    /**
+     * 展示大图需要的上下文
+     */
+    private Activity fromContext;
     //</editor-fold>
     //<editor-fold desc="功能变现">
+
     private void initView(AttributeSet attrs) {
         inflate(getContext(), R.layout.nine_img_layout, this);
         recyclerView = findViewById(R.id.nine_img_recycler);
@@ -102,12 +114,40 @@ public class NineImg extends RelativeLayout {
         return autoSize ? size == 1 ? 1 : 3 : 3;
     }
 
+    /**
+     * 更新adapter
+     */
+    private void notifyData() {
+        if (null != adapter) {
+            recyclerView.removeItemDecoration(recyclerView.getItemDecorationAt(0));
+            recyclerView.addItemDecoration(new GridSpacingItemDecoration(getColumn(), dividerSize, false));
+            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
+                @Override
+                public boolean canScrollVertically() {
+                    return false;
+                }
+            });
+            adapter.notifyDataSetChanged();
+        }
+    }
     //</editor-fold>
-
     //<editor-fold desc="API">
 
-    public void setImageLoader(ImageLoaderInterface imageLoader) {
-//        NineImg.imageLoader = imageLoader;
+
+    /**
+     * 设置资源
+     *
+     * @param list 与 {@link #setAutoSize(boolean)}冲突，如果开启了autoSize，就不可以更改list数量了
+     */
+    public void setList(final ArrayList<String> list) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                width = getWidth();
+                data = list;
+                notifyData();
+            }
+        });
     }
 
     /**
@@ -122,52 +162,45 @@ public class NineImg extends RelativeLayout {
     }
 
     /**
-     * 设置资源
-     *
-     * @param list 与 {@link #setAutoSize(boolean)}冲突，如果开启了autoSize，就不可以更改list数量了
-     */
-    public void setList(final ArrayList<String> list) {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                width = getWidth();
-                data = list;
-                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
-                    @Override
-                    public boolean canScrollVertically() {
-                        return false;
-                    }
-                });
-                adapter.notifyDataSetChanged();
-            }
-        });
-    }
-
-    /**
      * 根据图片数量，自动调整图片大小
      *
      * @param autoSize 与 {@link #setList(ArrayList)} 冲突
      */
     public void setAutoSize(boolean autoSize) {
         this.autoSize = autoSize;
-        if (null != adapter) {
-            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
-                @Override
-                public boolean canScrollVertically() {
-                    return false;
-                }
-            });
-            adapter.notifyDataSetChanged();
-        }
+        notifyData();
     }
 
-    private OnItemClickListener onItemClickListener;
-
+    /**
+     * 设置子控件的监听
+     *
+     * @param listener
+     */
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
-    //</editor-fold>
 
+    /**
+     * 大图显示模式
+     *
+     * @param displayBigImg
+     * @param activity
+     */
+    public void setBigImgDisplay(boolean displayBigImg, Activity activity) {
+        this.displayBigImg = displayBigImg;
+        this.fromContext = activity;
+    }
+
+    /**
+     * 设置子控件之间的间距
+     *
+     * @param px
+     */
+    public void setLineWidth(int px) {
+        this.dividerSize = px;
+        notifyData();
+    }
+    //</editor-fold>
     //<editor-fold desc="adapter">
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> implements OnClickListener {
@@ -175,15 +208,14 @@ public class NineImg extends RelativeLayout {
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.item_nine_img_layout, parent, false);
             view.setOnClickListener(this);
-            ViewHolder viewHolder = new ViewHolder(view);
-            return viewHolder;
+            return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             if (0 != width) {
-                holder.imageView.getLayoutParams().height = (int) ((width - (((getColumn() - 1) * dividerSize))) / (getColumn() == 1 ? 2.1f : 3));
-                holder.imageView.getLayoutParams().width = (int) ((width - (((getColumn() - 1) * dividerSize))) / (getColumn() == 1 ? 2.5f : 3));
+                holder.imageView.getLayoutParams().height = (int) ((width - (((getColumn() - 1) * dividerSize))) / (autoSize && getColumn() == 1 ? 2.1f : 3));
+                holder.imageView.getLayoutParams().width = (int) ((width - (((getColumn() - 1) * dividerSize))) / (autoSize && getColumn() == 1 ? 2.5f : 3));
                 holder.imageView.setLayoutParams(holder.imageView.getLayoutParams());
             }
             holder.imageView.displayImage(data.get(position));
@@ -199,34 +231,22 @@ public class NineImg extends RelativeLayout {
         public void onClick(View v) {
             if (null != onItemClickListener) {
                 onItemClickListener.onItemClick(v, (Integer) v.getTag());
-            }
-            if (display && null != fromActivity) {
+            } else if (displayBigImg && null != fromContext) {
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("list", data);
                 bundle.putInt("currentPosition", (Integer) v.getTag());
                 bundle.putInt("loadingImg", loadingImg);
                 bundle.putInt("errorImg", errorImg);
-
-                Intent intent = new Intent(fromActivity, DisplayNineImgActivity.class);
+                Intent intent = new Intent(fromContext, DisplayNineImgActivity.class);
                 intent.putExtras(bundle);
 //                if (Build.VERSION.SDK_INT >= 21) {
-//                    fromActivity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(fromActivity, v, "itemNineImg").toBundle());
+//                    fromContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(fromContext, v, "itemNineImg").toBundle());
 //                } else {
-                fromActivity.startActivity(intent);
-                fromActivity.overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
-//                }
+                fromContext.startActivity(intent);
+                fromContext.overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
             }
         }
     }
-
-    private boolean display;
-    private Activity fromActivity;
-
-    public void setDisplay(boolean display, Activity activity) {
-        this.display = display;
-        this.fromActivity = activity;
-    }
-
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 

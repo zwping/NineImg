@@ -12,7 +12,6 @@
 
     <win.zwping.nineimg_lib.NineImg
         android:id="@+id/nine_img"
-        android:layout_marginLeft="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
