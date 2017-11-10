@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import win.zwping.plib.frame.PImageView;
  * 兼容性bug{@link #setAutoSize(boolean)}，使用流式布局展示兼容性更好，ps：时间不够
  */
 public class NineImg extends RelativeLayout {
+
 
     //<editor-fold desc="构造函数">
 
@@ -72,9 +74,9 @@ public class NineImg extends RelativeLayout {
      * 分割线的大小
      */
     private int dividerSize = 2;
+
     //</editor-fold>
     //<editor-fold desc="功能变现">
-
     private void initView(AttributeSet attrs) {
         inflate(getContext(), R.layout.nine_img_layout, this);
         recyclerView = findViewById(R.id.nine_img_recycler);
@@ -82,13 +84,12 @@ public class NineImg extends RelativeLayout {
         if (null == adapter) {
             data = new ArrayList<>();
             adapter = new Adapter();
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), getColumn()) {
+            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
                 @Override
                 public boolean canScrollVertically() {
                     return false;
                 }
-            };
-            recyclerView.setLayoutManager(gridLayoutManager);
+            });
             recyclerView.addItemDecoration(new GridSpacingItemDecoration(getColumn(), dividerSize, false));
             recyclerView.setAdapter(adapter);
         } else {
@@ -123,25 +124,39 @@ public class NineImg extends RelativeLayout {
     /**
      * 设置资源
      *
-     * @param layoutWidth
-     * @param list        与 {@link #setAutoSize(boolean)}冲突，如果开启了autoSize，就不可以更改list数量了
+     * @param list 与 {@link #setAutoSize(boolean)}冲突，如果开启了autoSize，就不可以更改list数量了
      */
-    public void setList(float layoutWidth, ArrayList<String> list) {
-        width = layoutWidth;
-        data = list;
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()));
-        adapter.notifyDataSetChanged();
+    public void setList(final ArrayList<String> list) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                width = getWidth();
+                data = list;
+                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
+                    @Override
+                    public boolean canScrollVertically() {
+                        return false;
+                    }
+                });
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     /**
      * 根据图片数量，自动调整图片大小
      *
-     * @param autoSize 与 {@link #setList(float, ArrayList)} 冲突
+     * @param autoSize 与 {@link #setList(ArrayList)} 冲突
      */
     public void setAutoSize(boolean autoSize) {
         this.autoSize = autoSize;
         if (null != adapter) {
-            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()));
+            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
+                @Override
+                public boolean canScrollVertically() {
+                    return false;
+                }
+            });
             adapter.notifyDataSetChanged();
         }
     }
@@ -198,6 +213,7 @@ public class NineImg extends RelativeLayout {
 //                    fromActivity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(fromActivity, v, "itemNineImg").toBundle());
 //                } else {
                 fromActivity.startActivity(intent);
+                fromActivity.overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
 //                }
             }
         }

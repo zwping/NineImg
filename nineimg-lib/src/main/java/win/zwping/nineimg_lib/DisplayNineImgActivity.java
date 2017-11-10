@@ -52,6 +52,12 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
 
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
+    }
+
     //<editor-fold desc="viewPager Adapter">
 
     PagerAdapter adapter = new PagerAdapter() {
@@ -83,6 +89,12 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
                 imageView.setErrorImg(errorImg);
             }
             imageView.display(list.get(position));
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
             container.addView(imageView);
             return imageView;
         }
