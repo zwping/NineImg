@@ -3,7 +3,9 @@
     package="win.zwping.nineimg_lib">
 
     <application>
-        <activity android:name=".DisplayNineImgActivity"></activity>
+        <activity
+            android:name=".DisplayNineImgActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

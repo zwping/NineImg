@@ -8,8 +8,8 @@
         Android:fromYScale="1.0"
         Android:pivotX="50%p"
         Android:pivotY="50%p"
-        Android:toXScale="2"
-        Android:toYScale="2" />
+        Android:toXScale="1"
+        Android:toYScale="1" />
     <alpha
         Android:duration="@android:integer/config_mediumAnimTime"
         Android:fromAlpha="0.5"
