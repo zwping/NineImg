@@ -136,17 +136,13 @@ public class NineImg extends RelativeLayout {
      */
     public void setList(final ArrayList<String> list) {
         data = list;
-        if (0 == width) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    width = getWidth();
-                    notifyData();
-                }
-            });
-        } else {
-            notifyData();
-        }
+        post(new Runnable() {
+            @Override
+            public void run() {
+                width = getWidth();
+                notifyData();
+            }
+        });
     }
 
     /**
