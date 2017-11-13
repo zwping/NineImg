@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -129,20 +130,16 @@ public class NineImg extends RelativeLayout {
     //</editor-fold>
     //<editor-fold desc="API">
 
+
     /**
      * 设置资源
      *
      * @param list
      */
-    public void setList(final ArrayList<String> list) {
+    public void setList(int layoutWidth, ArrayList<String> list) {
+        width = layoutWidth;
         data = list;
-        post(new Runnable() {
-            @Override
-            public void run() {
-                width = getWidth();
-                notifyData();
-            }
-        });
+        notifyData();
     }
 
     /**

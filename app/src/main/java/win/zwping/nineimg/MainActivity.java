@@ -52,13 +52,13 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 9; i++) {
             list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
         }
-        nineImg.setAutoSize(true);
-        nineImg.setList(list);
+//        nineImg.setAutoSize(true);
+//        nineImg.setList(list);
 
 //        lists.add(list);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             ArrayList<String> list1 = new ArrayList<>();
-            for (int i1 = 0; i1 < (new Random().nextInt(8) + 3); i1++) {
+            for (int i1 = 0; i1 < (new Random().nextInt(8) + 1); i1++) {
                 if (new Random().nextBoolean()) {
                     list1.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
                 } else if (new Random().nextBoolean()) {
@@ -76,21 +76,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void OnClick(View view) {
         //不允许这种方式
-//        lists = new ArrayList<>();
-//        for (int i = 0; i < 10; i++) {
-//            ArrayList<String> list1 = new ArrayList<>();
-//            for (int i1 = 0; i1 < new Random().nextInt(8) + 1; i1++) {
-//                list1.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
-//            }
-//            lists.add(list1);
-//        }
-//        adapter.notifyDataSetChanged();
-
-        ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < new Random().nextInt(2) + 1; i++) {
-            list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
+        recyclerView.scrollToPosition(0);
+        lists = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            ArrayList<String> list1 = new ArrayList<>();
+            for (int i1 = 0; i1 < new Random().nextInt(8) + 1; i1++) {
+                list1.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
+            }
+            lists.add(list1);
         }
-        nineImg.setList(list);
+        adapter.notifyDataSetChanged();
+
+//        ArrayList<String> list = new ArrayList<String>();
+//        for (int i = 0; i < new Random().nextInt(2) + 1; i++) {
+//            list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
+//        }
+//        nineImg.setList(list);
     }
 
     private List<ArrayList<String>> lists = new ArrayList<>();
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
 //            holder.nineImg.setPlaceholder(R.mipmap.error_picture,R.mipmap.error_picture);
-            holder.nineImg.setList(lists.get(position));
+            holder.nineImg.setList(getResources().getDisplayMetrics().widthPixels, lists.get(position));
 
             holder.nineImg.setBigImgDisplay(true, MainActivity.this);
             holder.nineImg.setAutoSize(true);
