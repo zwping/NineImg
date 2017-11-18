@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
 import win.zwping.nineimg_lib.i.OnItemClickListener;
 import win.zwping.nineimg_lib.view.GridSpacingItemDecoration;
 import win.zwping.plib.frame.PImageView;
@@ -27,7 +29,7 @@ import win.zwping.plib.frame.PImageView;
  * <p> @author：zwp on 2017/10/31 mail：1101558280@qq.com web: http://www.zwping.win </p>
  * <p>
  */
-public class NineImg extends RelativeLayout {
+public class NineImg extends RelativeLayout implements OnItemClickListener {
 
 
     //<editor-fold desc="构造函数">
@@ -75,6 +77,7 @@ public class NineImg extends RelativeLayout {
      * 子控件的监听
      */
     private OnItemClickListener onItemClickListener;
+    private OnEmptyItemClickListener emptyItemClickListener;
     /**
      * 展示大图
      */
@@ -101,6 +104,7 @@ public class NineImg extends RelativeLayout {
             });
             recyclerView.addItemDecoration(new GridSpacingItemDecoration(getColumn(), dividerSize, false));
             recyclerView.setAdapter(adapter);
+            recyclerView.addOnItemTouchListener(new RecyclerViewItemTouchListener(recyclerView, this));
         } else {
             adapter.notifyDataSetChanged();
         }
@@ -127,16 +131,40 @@ public class NineImg extends RelativeLayout {
             adapter.notifyDataSetChanged();
         }
     }
+
+    @Override
+    public void onItemClick(View v, int position) {  //recyclerView的点击事件
+        if (null != onItemClickListener) {
+            onItemClickListener.onItemClick(v, (Integer) v.getTag());
+        } else if (displayBigImg && null != fromContext) {
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("list", data);
+            bundle.putInt("currentPosition", (Integer) v.getTag());
+            bundle.putInt("loadingImg", loadingImg);
+            bundle.putInt("errorImg", errorImg);
+            Intent intent = new Intent(fromContext, DisplayNineImgActivity.class);
+            intent.putExtras(bundle);
+            fromContext.startActivity(intent);
+            fromContext.overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
+        }
+    }
+
+    @Override
+    public void onEmptyItemClick() {  //recyclerView空白区域的点击事件
+        if (null != emptyItemClickListener) {
+            emptyItemClickListener.onEmptyItemClick();
+        }
+    }
     //</editor-fold>
     //<editor-fold desc="API">
 
-
     /**
      * 设置资源
-     *
+     * @param layoutWidth 控件宽度
      * @param list
      */
     public void setList(int layoutWidth, ArrayList<String> list) {
+        // TODO: 2017/11/18 0018 动态获取控件的宽度
         width = layoutWidth;
         data = list;
         notifyData();
@@ -173,6 +201,15 @@ public class NineImg extends RelativeLayout {
     }
 
     /**
+     * GridLayoutManager的recyclerView中空白区域点击监听
+     *
+     * @param listener
+     */
+    public void setOnEmptyItemClickListener(OnEmptyItemClickListener listener) {
+        this.emptyItemClickListener = listener;
+    }
+
+    /**
      * 大图显示模式
      *
      * @param displayBigImg
@@ -195,11 +232,10 @@ public class NineImg extends RelativeLayout {
     //</editor-fold>
     //<editor-fold desc="adapter">
 
-    private class Adapter extends RecyclerView.Adapter<ViewHolder> implements OnClickListener {
+    private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.item_nine_img_layout, parent, false);
-            view.setOnClickListener(this);
             return new ViewHolder(view);
         }
 
@@ -218,26 +254,6 @@ public class NineImg extends RelativeLayout {
         public int getItemCount() {
             return data.size();
         }
-
-        @Override
-        public void onClick(View v) {
-            if (null != onItemClickListener) {
-                onItemClickListener.onItemClick(v, (Integer) v.getTag());
-            } else if (displayBigImg && null != fromContext) {
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("list", data);
-                bundle.putInt("currentPosition", (Integer) v.getTag());
-                bundle.putInt("loadingImg", loadingImg);
-                bundle.putInt("errorImg", errorImg);
-                Intent intent = new Intent(fromContext, DisplayNineImgActivity.class);
-                intent.putExtras(bundle);
-//                if (Build.VERSION.SDK_INT >= 21) {
-//                    fromContext.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(fromContext, v, "itemNineImg").toBundle());
-//                } else {
-                fromContext.startActivity(intent);
-                fromContext.overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
-            }
-        }
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -248,6 +264,7 @@ public class NineImg extends RelativeLayout {
             super(itemView);
             imageView = itemView.findViewById(R.id.nine_img_img);
             imageView.showGifFlag();
+            imageView.setTransitionImg();
             if (0 != loadingImg) {
                 imageView.setLoadingImg(loadingImg);
             }

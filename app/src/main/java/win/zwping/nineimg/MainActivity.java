@@ -21,6 +21,7 @@ import java.util.Random;
 
 import ch.ielse.view.imagewatcher.ImageWatcher;
 import win.zwping.nineimg_lib.NineImg;
+import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -100,7 +101,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(MainActivity.this).inflate(R.layout.item_nine_img, parent, false));
+            View view1 = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_nine_img, parent, false);
+            view1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    System.out.println("跳转");
+                }
+            });
+            return new ViewHolder(view1);
         }
 
         @Override
@@ -110,6 +118,12 @@ public class MainActivity extends AppCompatActivity {
 
             holder.nineImg.setBigImgDisplay(true, MainActivity.this);
             holder.nineImg.setAutoSize(true);
+            holder.nineImg.setOnEmptyItemClickListener(new OnEmptyItemClickListener() {
+                @Override
+                public void onEmptyItemClick() {
+                    System.out.println("点击空布局了");
+                }
+            });
             holder.textView.setText(position + "------");
         }
 

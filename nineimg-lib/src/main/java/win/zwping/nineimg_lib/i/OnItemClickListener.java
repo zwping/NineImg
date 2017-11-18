@@ -15,4 +15,8 @@ public interface OnItemClickListener {
      * @param position
      */
     void onItemClick(View v, int position);
+
+    void onEmptyItemClick();
+
+    //void onItemLongClick(View view, int position);
 }
