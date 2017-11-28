@@ -21,6 +21,8 @@ import win.zwping.nineimg_lib.view.GridSpacingItemDecoration;
 
 /**
  * <p>describe：使用recyclerView使用9图功能
+ * <p>    note：实现流式布局
+ * <p>    note：跳转效果更换
  * <p>    note：
  * <p> @author：zwp on 2017/11/20 0020 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
@@ -69,7 +71,7 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
     /**
      * 展示大图
      */
-    private boolean displayBigImg;
+    private boolean displayNineImg;
     /**
      * 展示大图需要的上下文
      */
@@ -131,7 +133,7 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
     public void onItemClick(RecyclerView.ViewHolder viewHolder, ArrayList<String> data) {  //recyclerView的点击事件
         if (null != onItemClickListener) {
             onItemClickListener.onItemClick(viewHolder, this.data);
-        } else if (displayBigImg && null != fromContext) {
+        } else if (displayNineImg && null != fromContext) {
             displayNineImg(this.data, viewHolder.getAdapterPosition());
         } else {
 
@@ -217,7 +219,7 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
      * @param activity
      */
     public NineImg setAutoDisplayNineImg(boolean displayBigImg, Activity activity) {
-        this.displayBigImg = displayBigImg;
+        this.displayNineImg = displayBigImg;
         this.fromContext = activity;
         return this;
     }
@@ -238,6 +240,15 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
     }
 
     /**
+     * 获取当前9图中剩余的数据
+     *
+     * @return
+     */
+    public ArrayList<String> getCurrentData() {
+        return data;
+    }
+
+    /**
      * 去除某个item
      *
      * @param position
@@ -255,6 +266,7 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
      *
      * @param data
      * @param position
+     * @deprecated 不使用{{@link DisplayNineImgActivity}可以替换掉该方法
      */
     public void displayNineImg(ArrayList<String> data, int position) {
         Bundle bundle = new Bundle();

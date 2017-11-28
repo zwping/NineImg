@@ -21,6 +21,7 @@ import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
  * 9图显示
  *
  * @author zwping
+ * @deprecated 这个页面及效果可以完全替换
  */
 public class DisplayNineImgActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
