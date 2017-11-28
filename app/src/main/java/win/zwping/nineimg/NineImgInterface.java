@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import win.zwping.nineimg_lib.NineImg;
 import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
 import win.zwping.nineimg_lib.i.NineImgLoaderInterface;
+import win.zwping.plib.frame.review.PImageView;
 
 /**
  * <p>describe：
@@ -25,7 +26,9 @@ public class NineImgInterface {
 
         @Override
         public View createView(ViewGroup parent) {
-            return null;
+            PImageView pImageView = new PImageView(parent.getContext());
+//            pImageView
+            return pImageView;
         }
     }
 
