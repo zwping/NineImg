@@ -1,27 +1,30 @@
 package win.zwping.nineimg;
 
-import android.graphics.Color;
-import android.os.Build;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import ch.ielse.view.imagewatcher.ImageWatcher;
+import win.zwping.nineimg_lib.DisplayNineImgActivity;
 import win.zwping.nineimg_lib.NineImg;
+import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
+import win.zwping.nineimg_lib.i.NineImgLoaderInterface;
 import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
+import win.zwping.nineimg_lib.i.OnItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +48,36 @@ public class MainActivity extends AppCompatActivity {
 //        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        NineImg.setNineImgLoader(new NineImgLoaderInterface() {
+            @Override
+            public void displayImage(Context context, NineImg.ViewHolder holder, String url) {
+                Glide.with(context).load(url).asBitmap().centerCrop().into((ImageView) holder.getView(R.id.nine_img_img));
+            }
+
+            @Override
+            public View createView(ViewGroup parent) {
+                return LayoutInflater.from(parent.getContext()).inflate(R.layout.item_nine_img_layout, parent, false);
+            }
+        });
+
+        DisplayNineImgActivity.setLoaderInterface(new DisplayNineImgLoaderInterface() {
+            @Override
+            public void displayImage(Context context, String url, ImageView imageView) {
+                Glide.with(context).load(url).asBitmap().centerCrop().into(imageView);
+            }
+
+            @Override
+            public ImageView createView(Context context) {
+                return new ImageView(context);
+            }
+
+            @Override
+            public void saveReturn(String imgUrl) {
+                Toast.makeText(MainActivity.this, "保存成功" + imgUrl, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         nineImg = findViewById(R.id.nine_img);
         recyclerView = findViewById(R.id.recycler);
@@ -76,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnClick(View view) {
-        //不允许这种方式
         recyclerView.scrollToPosition(0);
         lists = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
@@ -93,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
 //            list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2662232333,1061247545&fm=27&gp=0.jpg");
 //        }
 //        nineImg.setList(list);
+
     }
 
     private List<ArrayList<String>> lists = new ArrayList<>();
@@ -112,19 +145,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-//            holder.nineImg.setPlaceholder(R.mipmap.error_picture,R.mipmap.error_picture);
-            holder.nineImg.setList(getResources().getDisplayMetrics().widthPixels, lists.get(position));
-
-            holder.nineImg.setBigImgDisplay(true, MainActivity.this);
-            holder.nineImg.setAutoSize(true);
-            holder.nineImg.setOnEmptyItemClickListener(new OnEmptyItemClickListener() {
-                @Override
-                public void onEmptyItemClick() {
-                    System.out.println("点击空布局了");
-                }
-            });
-            holder.textView.setText(position + "------");
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            holder.textView.setText(holder.getAdapterPosition() + "---");
+            holder.nineImg.setList(getResources().getDisplayMetrics().widthPixels, lists.get(position))
+                    .setAutoDisplayNineImg(true, MainActivity.this)
+                    .setAutoSize(true)
+//                    .setOnItemClickListener(new OnItemClickListener() {
+//                        @Override
+//                        public void onItemClick(final RecyclerView.ViewHolder viewHolder, final ArrayList<String> data) {
+//                            ViewGroup viewGroup = (ViewGroup) viewHolder.itemView;
+//                            viewGroup.findViewById(R.id.exit).setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    holder.nineImg.remove(viewHolder.getAdapterPosition());
+//                                }
+//                            });
+//                            viewGroup.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    holder.nineImg.displayNineImg(data, viewHolder.getAdapterPosition());
+//                                }
+//                            });
+//                        }
+//
+//                        @Override
+//                        public void onEmptyItemClick() {
+//                            System.out.println("点空布局了");
+//                        }
+//                    })
+                    .setOnEmptyItemClickListener(new OnEmptyItemClickListener() {
+                        @Override
+                        public void onEmptyItemClick() {
+                            System.out.println("空点击");
+                        }
+                    })
+                    .init();
         }
 
         @Override
@@ -140,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
 
         public ViewHolder(View itemView) {
             super(itemView);
-            System.out.println("执行多少次了" + ++num);
             nineImg = itemView.findViewById(R.id.nine_img);
             textView = itemView.findViewById(R.id.text);
         }

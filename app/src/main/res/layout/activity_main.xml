@@ -7,16 +7,11 @@
     android:orientation="vertical"
     tools:context="win.zwping.nineimg.MainActivity">
 
-    <TextView
-        android:id="@+id/textview"
-        android:layout_width="match_parent"
+    <Button
+        android:onClick="OnClick"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:onClick="OnClick" />
     <win.zwping.nineimg_lib.NineImg
         android:id="@+id/nine_img"
         android:background="@color/colorAccent"

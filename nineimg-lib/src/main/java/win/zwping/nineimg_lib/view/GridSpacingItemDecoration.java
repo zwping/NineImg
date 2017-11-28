@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * <p>describe：
+ * <p>describe：itemDecoration 宽度设置
  * <p>    note：
  * <p> @author：zwp on 2017/11/1 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */

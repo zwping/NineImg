@@ -24,7 +24,7 @@ public class RecyclerViewItemTouchListener extends RecyclerView.SimpleOnItemTouc
                 View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (null != mClickListener) {
                     if (childView != null) {
-                        mClickListener.onItemClick(childView, (int) childView.getTag());
+                        mClickListener.onItemClick(recyclerView.getChildViewHolder(childView), null);
                     } else {
                         mClickListener.onEmptyItemClick();
                     }

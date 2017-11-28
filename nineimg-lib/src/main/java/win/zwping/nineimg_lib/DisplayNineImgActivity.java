@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
-import win.zwping.plib.frame.PImageView;
+import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
+
 
 /**
  * 9图显示
@@ -22,17 +24,25 @@ import win.zwping.plib.frame.PImageView;
  */
 public class DisplayNineImgActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
+    //<editor-fold desc="内部参数">
+
     private ViewPager viewPager;
     private TextView textView;
 
     private List<String> list;
     private int position;
+    //</editor-fold>
+    //<editor-fold desc="全局静态参数">
 
-    private int loadingImg, errorImg;
+    public static DisplayNineImgLoaderInterface loaderInterface;
+    //</editor-fold>
+    //<editor-fold desc="功能变现">
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (null == loaderInterface)
+            throw new RuntimeException("请预先设置displayNineImgActivity图片加载接口【DisplayNineImgLoaderInterface】");
          /*set it to be no title*/
         requestWindowFeature(Window.FEATURE_NO_TITLE);
          /*set it to be full screen*/
@@ -40,8 +50,6 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
         setContentView(R.layout.activity_display_nine_img);
         position = getIntent().getExtras().getInt("currentPosition");
         list = getIntent().getExtras().getStringArrayList("list");
-        this.loadingImg = getIntent().getExtras().getInt("loadingImg");
-        this.errorImg = getIntent().getExtras().getInt("errorImg");
 
         viewPager = findViewById(R.id.viewpager);
         textView = findViewById(R.id.number);
@@ -57,8 +65,14 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
         super.finish();
         overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
     }
+    //</editor-fold>
+    //<editor-fold desc="API">
 
-    //<editor-fold desc="viewPager Adapter">
+    public static void setLoaderInterface(DisplayNineImgLoaderInterface imgLoaderInterface) {
+        loaderInterface = imgLoaderInterface;
+    }
+    //</editor-fold>
+    //<editor-fold desc="viewPager">
 
     PagerAdapter adapter = new PagerAdapter() {
         @Override
@@ -77,30 +91,33 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            PImageView imageView = new PImageView(DisplayNineImgActivity.this);
-            imageView.setBigModel();
-            imageView.showGifFlag();
-            imageView.playerGif(true);
-            if (0 != loadingImg) {
-                imageView.setLoadingImg(loadingImg);
-            }
-            if (0 != errorImg) {
-                imageView.setErrorImg(errorImg);
-            }
-            imageView.display(list.get(position));
+        public Object instantiateItem(ViewGroup container, final int position) {
+            ImageView imageView = loaderInterface.createView(DisplayNineImgActivity.this);
+            loaderInterface.displayImage(DisplayNineImgActivity.this, list.get(position), imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     finish();
                 }
             });
+            imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (null == saveDialog) {
+                        saveDialog = SaveDialog.newInstance(list.get(position));
+                    }
+                    if (!saveDialog.isAdded()) {
+                        saveDialog.show(getSupportFragmentManager(), "saveDialog");
+                    }
+                    return true;
+                }
+            });
             container.addView(imageView);
             return imageView;
         }
     };
-    //</editor-fold>
 
+    private SaveDialog saveDialog;
     //<editor-fold desc="viewPager切换监听">
 
     @Override
@@ -118,5 +135,6 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
     public void onPageScrollStateChanged(int state) {
 
     }
+    //</editor-fold>
     //</editor-fold>
 }
