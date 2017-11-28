@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -62,6 +64,19 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
      * 分割线的大小
      */
     private int dividerSize = 2;
+    /**
+     * 最大item数量
+     */
+    private int maxItem;
+    /**
+     * 是否增加+栏目（适用于相片选择增加）
+     */
+    private boolean addPlusItem;
+
+    /**
+     * + item Resource
+     */
+    private int plusItemResource;
 
     /**
      * 子控件的监听(OnItemClickListener中包含OnEmptyItemChickListener)
@@ -132,9 +147,13 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
     @Override
     public void onItemClick(RecyclerView.ViewHolder viewHolder, ArrayList<String> data) {  //recyclerView的点击事件
         if (null != onItemClickListener) {
-            onItemClickListener.onItemClick(viewHolder, this.data);
+            onItemClickListener.onItemClick(viewHolder, getCurrentData());
         } else if (displayNineImg && null != fromContext) {
-            displayNineImg(this.data, viewHolder.getAdapterPosition());
+            if (addPlusItem && this.data.size() - 1 == viewHolder.getAdapterPosition()) {
+                //规避点击事件，让事件透传出去
+            } else {
+                displayNineImg(getCurrentData(), viewHolder.getAdapterPosition());
+            }
         } else {
 
         }
@@ -234,7 +253,42 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
         return this;
     }
 
+    /**
+     * 设置9图最大显示数量
+     *
+     * @param max
+     * @return
+     */
+    public NineImg setMaxItem(int max) {
+        this.maxItem = max;
+        return this;
+    }
+
+    /**
+     * 设置添加+ item
+     *
+     * @param addPlusItem
+     * @param max
+     * @return
+     */
+    public NineImg setAddPlusItem(boolean addPlusItem, int max, OnPlusItemLoadListener plusItemLoadListener) {
+        setMaxItem(max);
+        this.plusItemLoadListener = plusItemLoadListener;
+        this.addPlusItem = addPlusItem;
+        return this;
+    }
+
     public NineImg init() {
+        if (maxItem != 0 && data.size() > maxItem) {
+            ArrayList<String> list = new ArrayList<>();
+            for (int i = 0; i < maxItem; i++) {
+                list.add(data.get(i));
+            }
+            data = list;
+        }
+        if (addPlusItem && (0 == maxItem || data.size() < maxItem)) {
+            data.add("");
+        }
         notifyData();
         return this;
     }
@@ -245,7 +299,17 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
      * @return
      */
     public ArrayList<String> getCurrentData() {
-        return data;
+        if (addPlusItem && TextUtils.isEmpty(data.get(data.size() - 1))) {
+            ArrayList<String> list = new ArrayList<>();
+            for (int i = 0; i < data.size(); i++) {
+                if (i != data.size() - 1) {
+                    list.add(data.get(i));
+                }
+            }
+            return list;
+        } else {
+            return data;
+        }
     }
 
     /**
@@ -293,8 +357,11 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
                 holder.itemView.getLayoutParams().width = (int) ((width - (((getColumn() - 1) * dividerSize))) / (autoSize && getColumn() == 1 ? 2.5f : 3));
                 holder.itemView.setLayoutParams(holder.itemView.getLayoutParams());
             }
-            loaderInterface.displayImage(getContext(), holder, data.get(position));
-            holder.itemView.setTag(position);
+            if (addPlusItem && data.size() - 1 == position) {
+                plusItemLoadListener.onPlusItemLoad(getContext(), holder);
+            } else {
+                loaderInterface.displayImage(getContext(), holder, data.get(position));
+            }
         }
 
         @Override
@@ -302,6 +369,12 @@ public class NineImg extends RecyclerView implements OnItemClickListener {
             return data.size();
         }
     }
+
+    public interface OnPlusItemLoadListener {
+        void onPlusItemLoad(Context context, RecyclerView.ViewHolder viewHolder);
+    }
+
+    private OnPlusItemLoadListener plusItemLoadListener;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 

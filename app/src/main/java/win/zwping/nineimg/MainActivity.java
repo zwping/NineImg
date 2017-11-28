@@ -25,6 +25,7 @@ import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
 import win.zwping.nineimg_lib.i.NineImgLoaderInterface;
 import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
 import win.zwping.nineimg_lib.i.OnItemClickListener;
+import win.zwping.plib.frame.review.PImageView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -103,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
             }
             lists.add(list1);
         }
-        NineImg.setNineImgLoader(new NineImgInterface.NineImgLoader());
-        DisplayNineImgActivity.setLoaderInterface(new NineImgInterface.DisplayNineImgLoader());
+//        NineImg.setNineImgLoader(new NineImgInterface.NineImgLoader());
+//        DisplayNineImgActivity.setLoaderInterface(new NineImgInterface.DisplayNineImgLoader());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter();
         recyclerView.setAdapter(adapter);
@@ -152,6 +153,21 @@ public class MainActivity extends AppCompatActivity {
             holder.nineImg.setList(getResources().getDisplayMetrics().widthPixels, lists.get(position))
                     .setAutoDisplayNineImg(true, MainActivity.this)
                     .setAutoSize(true)
+//                    .setMaxItem(9)
+                    .setAddPlusItem(true, 6, new NineImg.OnPlusItemLoadListener() {
+                        @Override
+                        public void onPlusItemLoad(Context context, RecyclerView.ViewHolder viewHolder) {
+                            viewHolder.itemView.findViewById(R.id.exit).setVisibility(View.GONE);
+                            ImageView plusItem = viewHolder.itemView.findViewById(R.id.nine_img_img);
+                            plusItem.setImageResource(R.mipmap.error_picture);
+                            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Toast.makeText(MainActivity.this, "111111111111111111", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    })
 //                    .setOnItemClickListener(new OnItemClickListener() {
 //                        @Override
 //                        public void onItemClick(final RecyclerView.ViewHolder viewHolder, final ArrayList<String> data) {
