@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
             }
             lists.add(list1);
         }
+        NineImg.setNineImgLoader(new NineImgInterface.NineImgLoader());
+        DisplayNineImgActivity.setLoaderInterface(new NineImgInterface.DisplayNineImgLoader());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter();
         recyclerView.setAdapter(adapter);
