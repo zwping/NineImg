@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="#f0f" />
 
-    <win.zwping.nineimg_lib.NineImg
+    <win.zwping.nineimg.review.WeChatPhotoNineImg
         android:id="@+id/nine_img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

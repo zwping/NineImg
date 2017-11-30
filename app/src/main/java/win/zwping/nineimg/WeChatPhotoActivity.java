@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import win.zwping.nineimg.review.WeChatPhotoNineImg;
 import win.zwping.nineimg_lib.DisplayNineImgActivity;
 import win.zwping.nineimg_lib.NineImg;
 import win.zwping.nineimg_lib.listener.OnEmptyItemClickListener;
@@ -79,19 +80,7 @@ public class WeChatPhotoActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.textView.setText(holder.getAdapterPosition() + "---");
             holder.nineImg
-                    .setDisplayNineImgLoader(new NineImgInterface.WeChatDisplayNineImgLoader())
-                    .setNineImgLoader(new NineImgInterface.WeChatNineImgLoader())
-                    .setWidth(getResources().getDisplayMetrics().widthPixels)
                     .setList(lists.get(position))
-                    .setClickAutoDisplayNineImg(true, WeChatPhotoActivity.this)
-                    .setAutoSize(true)
-                    .setMaxItem(9)
-                    .setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(final RecyclerView.ViewHolder viewHolder, final ArrayList<String> data) {
-                            holder.nineImg.displayNineImg(data, viewHolder.getAdapterPosition());
-                        }
-                    })
                     .setOnEmptyItemClickListener(new OnEmptyItemClickListener() {
                         @Override
                         public void onEmptyItemClick() {
@@ -109,7 +98,7 @@ public class WeChatPhotoActivity extends AppCompatActivity {
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
-        private NineImg nineImg;
+        private WeChatPhotoNineImg nineImg;
         private TextView textView;
 
         public ViewHolder(View itemView) {

@@ -92,10 +92,6 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
      */
     private boolean displayNineImg;
     /**
-     * 展示大图需要的上下文
-     */
-    private Activity fromContext;
-    /**
      * 针对+item对应的监听
      */
     private OnPlusItemLoaderListener plusItemLoadListener;
@@ -286,11 +282,9 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
      * 大图显示模式
      *
      * @param displayBigImg
-     * @param activity
      */
-    public NineImg setClickAutoDisplayNineImg(boolean displayBigImg, Activity activity) {
+    public NineImg setClickAutoDisplayNineImg(boolean displayBigImg) {
         this.displayNineImg = displayBigImg;
-        this.fromContext = activity;
         return this;
     }
 
@@ -348,6 +342,11 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
         }
     }
 
+    /**
+     * 更新数据，如果紧紧配置，可以不调用
+     *
+     * @return
+     */
     public NineImg init() {
         cutData();
         addFalseDataFromPlusItem();
@@ -370,7 +369,7 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
 
     /**
      * 大图预览
-     * <br />外部调用这个api也必须设置{@link #setClickAutoDisplayNineImg(boolean, Activity)}
+     * <br />外部调用这个api也必须设置{@link #setClickAutoDisplayNineImg(boolean)}
      * <br />不使用{{@link DisplayNineImgActivity}可以替换掉该方法
      *
      * @param data
@@ -380,10 +379,10 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("list", data);
         bundle.putInt("currentPosition", position);
-        Intent intent = new Intent(fromContext, DisplayNineImgActivity.class);
+        Intent intent = new Intent(getContext(), DisplayNineImgActivity.class);
         intent.putExtras(bundle);
-        fromContext.startActivity(intent);
-        fromContext.overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
+        ((Activity) getContext()).startActivity(intent);
+        ((Activity) getContext()).overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
     }
 
     public NineImg setDisplayNineImgSaveListener(OnDisplayNineImgSaveListener listener) {
@@ -445,7 +444,7 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
                     } else {
                         if (null != onItemClickListener) {
                             onItemClickListener.onItemClick(holder, getCurrentData());
-                        } else if (displayNineImg && null != fromContext) {
+                        } else if (displayNineImg) {
                             displayNineImg(getCurrentData(), holder.getAdapterPosition());
                         } else {
 

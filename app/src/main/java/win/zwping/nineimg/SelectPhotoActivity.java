@@ -53,7 +53,7 @@ public class SelectPhotoActivity extends AppCompatActivity {
                         ImagePicker.getInstance().setSelectLimit(9 - nineImg.getCurrentData().size());
                     }
                 })
-                .setClickAutoDisplayNineImg(true, this)
+                .setClickAutoDisplayNineImg(true)
                 .setAddPlusItem(true, 9, new OnPlusItemLoaderListener() {
                     @Override
                     public void onPlusItemLoader(Context context, RecyclerView.ViewHolder viewHolder) {
