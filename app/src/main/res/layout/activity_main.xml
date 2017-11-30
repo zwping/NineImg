@@ -8,18 +8,27 @@
     tools:context="win.zwping.nineimg.MainActivity">
 
     <Button
-        android:onClick="OnClick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <win.zwping.nineimg_lib.NineImg
-        android:id="@+id/nine_img"
-        android:background="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:background="#999"
+        android:onClick="OnClick1"
+        android:text="微信朋友圈相册" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler"
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:background="#999"
+        android:onClick="OnClick2"
+        android:text="拍照选择" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:background="#999"
+        android:enabled="false"
+        android:text="流式布局(开发中...)" />
+
 </LinearLayout>

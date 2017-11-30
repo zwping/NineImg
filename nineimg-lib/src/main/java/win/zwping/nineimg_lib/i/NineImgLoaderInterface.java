@@ -16,6 +16,14 @@ import win.zwping.nineimg_lib.NineImg;
  */
 public interface NineImgLoaderInterface extends Serializable {
     /**
+     * 创建recyclerViewItemView
+     *
+     * @param parent
+     * @return
+     */
+    View createView(ViewGroup parent);
+
+    /**
      * 展示图片
      *
      * @param context
@@ -24,11 +32,4 @@ public interface NineImgLoaderInterface extends Serializable {
      */
     void displayImage(Context context, NineImg.ViewHolder holder, String url);
 
-    /**
-     * 创建recyclerViewItemView
-     *
-     * @param parent
-     * @return
-     */
-    View createView(ViewGroup parent);
 }

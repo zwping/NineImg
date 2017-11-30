@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import win.zwping.nineimg_lib.NineImg;
 import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
 import win.zwping.nineimg_lib.i.NineImgLoaderInterface;
@@ -18,7 +20,9 @@ import win.zwping.plib.frame.review.PImageView;
  */
 public class NineImgInterface {
 
-    public static class NineImgLoader implements NineImgLoaderInterface {
+    /*=======================微信相册==============================*/
+
+    public static class WeChatNineImgLoader implements NineImgLoaderInterface {
 
         @Override
         public void displayImage(Context context, NineImg.ViewHolder holder, String url) {
@@ -35,7 +39,7 @@ public class NineImgInterface {
         }
     }
 
-    public static class DisplayNineImgLoader implements DisplayNineImgLoaderInterface {
+    public static class WeChatDisplayNineImgLoader implements DisplayNineImgLoaderInterface {
 
         @Override
         public void displayImage(Context context, String url, ImageView imageView) {
@@ -57,4 +61,38 @@ public class NineImgInterface {
 
         }
     }
+    /*=======================微信相册==============================*/
+    /*=======================选择相片==============================*/
+
+    public static class SelectPicNineImgLoader implements NineImgLoaderInterface {
+
+        @Override
+        public View createView(ViewGroup parent) {
+            return LayoutInflater.from(parent.getContext()).inflate(R.layout.item_nine_img_layout, parent, false);
+        }
+
+        @Override
+        public void displayImage(Context context, NineImg.ViewHolder holder, String url) {
+            Glide.with(context).load(url).asBitmap().centerCrop().into((ImageView) holder.getView(R.id.nine_img_img));
+            holder.itemView.findViewById(R.id.exit).setVisibility(View.VISIBLE);
+            holder.addOnClickListener(R.id.exit);
+        }
+    }
+
+    public static class SelectPicDisplayNineImgLoader implements DisplayNineImgLoaderInterface {
+        @Override
+        public ImageView createView(Context context) {
+            return new ImageView(context);
+        }
+
+        @Override
+        public void displayImage(Context context, String url, ImageView imageView) {
+            Glide.with(context).load(url).asBitmap().centerCrop().into(imageView);
+        }
+
+        @Override
+        public void saveReturn(String imgUrl) {
+        }
+    }
+    /*=======================选择相片==============================*/
 }

@@ -18,26 +18,30 @@ import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
 
 
 /**
- * 9图显示
- *
- * @author zwping
- * @deprecated 这个页面及效果可以完全替换
+ * <p>describe：显示9图及转场动画
+ * <p>    note：可以不使用该页面
+ * <p>    note：
+ * <p> @author：zwp on ${DATE} mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
 public class DisplayNineImgActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     //<editor-fold desc="内部参数">
-
     private ViewPager viewPager;
     private TextView textView;
 
     private List<String> list;
     private int position;
+
+    /**
+     * 长按显示保存的dialog
+     */
+    private SaveDialog saveDialog;
     //</editor-fold>
     //<editor-fold desc="全局静态参数">
 
     public static DisplayNineImgLoaderInterface loaderInterface;
     //</editor-fold>
-    //<editor-fold desc="功能变现">
+    //<editor-fold desc="内部方法">
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +121,6 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
             return imageView;
         }
     };
-
-    private SaveDialog saveDialog;
     //<editor-fold desc="viewPager切换监听">
 
     @Override

@@ -6,38 +6,29 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
 import win.zwping.nineimg_lib.i.OnItemClickListener;
 
 /**
- * Created by Administrator on 2017/11/18 0018.
+ * <p>describe：通过simpleOnTouchListener获取recyclerView的点击事件，在这主要用于监听recyclerView gridLayout模式下空白区域的点击事件
+ * <p>    note：
+ * <p> @author：zwp on ${DATE} mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
-
 public class RecyclerViewItemTouchListener extends RecyclerView.SimpleOnItemTouchListener {
-    private OnItemClickListener mClickListener;
     private GestureDetectorCompat mGestureDetector;
 
-    public RecyclerViewItemTouchListener(final RecyclerView recyclerView, OnItemClickListener listener) {
-        this.mClickListener = listener;
+    public RecyclerViewItemTouchListener(final RecyclerView recyclerView, final OnEmptyItemClickListener emptyItemClickListener) {
         mGestureDetector = new GestureDetectorCompat(recyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
                 View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                if (null != mClickListener) {
-                    if (childView != null) {
-                        mClickListener.onItemClick(recyclerView.getChildViewHolder(childView), null);
-                    } else {
-                        mClickListener.onEmptyItemClick();
-                    }
-                }
+                if (null == childView) emptyItemClickListener.onEmptyItemClick();
+                else {}
                 return true;
             }
 
             @Override
             public void onLongPress(MotionEvent e) {
-                View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                if (childView != null && mClickListener != null) {
-//                            mClickListener.onItemLongClick(childView);
-                }
             }
         });
     }

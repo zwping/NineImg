@@ -10,14 +10,13 @@ import java.util.ArrayList;
  * <p>    note：
  * <p> @author：zwp on 2017/11/1 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
-public interface OnItemClickListener extends OnEmptyItemClickListener {
+public interface OnItemClickListener {
     /**
      * 子控件点击事件
      *
      * @param viewHolder
-     * @param data     当前nine data
+     * @param data       当前nine data
      */
     void onItemClick(RecyclerView.ViewHolder viewHolder, ArrayList<String> data);
-
-    //void onItemLongClick(View view, int position);
+//    void onItemClick(RecyclerView.ViewHolder viewHolder, ArrayList<String> data);
 }

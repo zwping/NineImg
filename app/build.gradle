@@ -31,6 +31,7 @@ dependencies {
     })
     implementation project(':nineimg-lib')
     compile 'com.github.bumptech.glide:glide:3.8.0'
+    compile 'com.lzy.widget:imagepicker:0.6.1'
 
     compile 'ch.ielse:imagewatcher:1.0.3'  //需要参考一下这个
 
