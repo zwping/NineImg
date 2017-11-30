@@ -1,5 +1,5 @@
 # NineImg
-仿微信相册展示（待改进）
+微信相册展示 + 拍照选择的9图
 
 
 [![JtiPack](https://jitpack.io/v/win.zwping/NineImg.svg)](https://jitpack.io/#win.zwping/NineImg)
