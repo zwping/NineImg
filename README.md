@@ -3,7 +3,7 @@
 
 
 [![JtiPack](https://jitpack.io/v/win.zwping/NineImg.svg)](https://jitpack.io/#win.zwping/NineImg)
-[![JavaDoc](https://img.shields.io/badge/JavaDoc-Refer-orange.svg)](https://jitpack.io/com/github/zwping/NineImg/v1.1/javadoc/)
+[![JavaDoc](https://img.shields.io/badge/JavaDoc-Reference-orange.svg)](https://jitpack.io/com/github/zwping/NineImg/v1.1/javadoc/)
 [![Aar](https://img.shields.io/badge/aar-43kb-brightgreen.svg)](https://github.com/zwping/NineImg/blob/master/NineImg-lib-v1.1.aar?raw=true)
 ![Api](https://img.shields.io/badge/API-16%2B-brightgreen.svg)
 ![Author](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-%E8%A9%B9%E6%96%87%E5%B9%B3-blue.svg)
