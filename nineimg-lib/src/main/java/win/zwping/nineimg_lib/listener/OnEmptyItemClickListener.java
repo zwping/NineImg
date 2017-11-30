@@ -1,4 +1,4 @@
-package win.zwping.nineimg_lib.i;
+package win.zwping.nineimg_lib.listener;
 
 /**
  * <p>describe：adapter中空白区域点击监听（主要是在GridLayoutManager中空白区域）

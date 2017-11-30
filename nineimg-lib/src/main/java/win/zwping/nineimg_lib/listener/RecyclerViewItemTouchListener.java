@@ -1,13 +1,10 @@
-package win.zwping.nineimg_lib;
+package win.zwping.nineimg_lib.listener;
 
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-
-import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
-import win.zwping.nineimg_lib.i.OnItemClickListener;
 
 /**
  * <p>describe：通过simpleOnTouchListener获取recyclerView的点击事件，在这主要用于监听recyclerView gridLayout模式下空白区域的点击事件

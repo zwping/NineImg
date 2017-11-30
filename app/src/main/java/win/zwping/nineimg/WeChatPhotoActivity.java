@@ -15,9 +15,8 @@ import java.util.Random;
 
 import win.zwping.nineimg_lib.DisplayNineImgActivity;
 import win.zwping.nineimg_lib.NineImg;
-import win.zwping.nineimg_lib.i.OnChildItemClickListener;
-import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
-import win.zwping.nineimg_lib.i.OnItemClickListener;
+import win.zwping.nineimg_lib.listener.OnEmptyItemClickListener;
+import win.zwping.nineimg_lib.listener.OnItemClickListener;
 
 public class WeChatPhotoActivity extends AppCompatActivity {
 
@@ -31,11 +30,6 @@ public class WeChatPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wechat_photo);
         recyclerView = findViewById(R.id.recycler);
-
-        NineImg.setNineImgLoader(new NineImgInterface.WeChatNineImgLoader());
-        DisplayNineImgActivity.setLoaderInterface(new NineImgInterface.WeChatDisplayNineImgLoader());
-//        NineImg.setNineImgLoader(new NineImgInterface.SelectPicNineImgLoader());
-//        DisplayNineImgActivity.setLoaderInterface(new NineImgInterface.SelectPicDisplayNineImgLoader());
 
         getList();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -85,6 +79,8 @@ public class WeChatPhotoActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.textView.setText(holder.getAdapterPosition() + "---");
             holder.nineImg
+                    .setDisplayNineImgLoader(new NineImgInterface.WeChatDisplayNineImgLoader())
+                    .setNineImgLoader(new NineImgInterface.WeChatNineImgLoader())
                     .setWidth(getResources().getDisplayMetrics().widthPixels)
                     .setList(lists.get(position))
                     .setClickAutoDisplayNineImg(true, WeChatPhotoActivity.this)

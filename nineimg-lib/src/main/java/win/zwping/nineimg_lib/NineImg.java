@@ -12,13 +12,19 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
 import win.zwping.nineimg_lib.i.NineImgLoaderInterface;
-import win.zwping.nineimg_lib.i.OnChildItemClickListener;
-import win.zwping.nineimg_lib.i.OnEmptyItemClickListener;
-import win.zwping.nineimg_lib.i.OnItemClickListener;
+import win.zwping.nineimg_lib.i.SmallDisplayNineImgLoaderInterface;
+import win.zwping.nineimg_lib.listener.OnChildItemClickListener;
+import win.zwping.nineimg_lib.listener.OnDisplayNineImgSaveListener;
+import win.zwping.nineimg_lib.listener.OnEmptyItemClickListener;
+import win.zwping.nineimg_lib.listener.OnItemClickListener;
+import win.zwping.nineimg_lib.listener.OnPlusItemLoaderListener;
+import win.zwping.nineimg_lib.listener.RecyclerViewItemTouchListener;
 import win.zwping.nineimg_lib.view.GridSpacingItemDecoration;
 
 /**
@@ -28,7 +34,7 @@ import win.zwping.nineimg_lib.view.GridSpacingItemDecoration;
  * <p>    note：
  * <p> @author：zwp on 2017/11/20 0020 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
-public class NineImg extends RecyclerView implements OnEmptyItemClickListener {
+public class NineImg extends RecyclerView implements OnEmptyItemClickListener, DisplayNineImgLoaderInterface {
 
     //<editor-fold desc="构造函数">
 
@@ -89,7 +95,12 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener {
      * 展示大图需要的上下文
      */
     private Activity fromContext;
+    /**
+     * 针对+item对应的监听
+     */
+    private OnPlusItemLoaderListener plusItemLoadListener;
 
+    private OnDisplayNineImgSaveListener onDisplayNineImgSaveListener;
 
     //</editor-fold>
     //<editor-fold desc="全局静态参数">
@@ -182,10 +193,19 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener {
     /**
      * 设置9图加载模式
      *
-     * @param loading
+     * @param loader
      */
-    public static void setNineImgLoader(NineImgLoaderInterface loading) {
-        loaderInterface = loading;
+    public NineImg setNineImgLoader(NineImgLoaderInterface loader) {
+        loaderInterface = loader;
+        return this;
+    }
+
+    private SmallDisplayNineImgLoaderInterface smallDisplayNineImgLoaderInterface;
+
+    public NineImg setDisplayNineImgLoader(SmallDisplayNineImgLoaderInterface loader) {
+        DisplayNineImgActivity.setLoaderInterface(this);
+        smallDisplayNineImgLoaderInterface = loader;
+        return this;
     }
 
     /**
@@ -350,7 +370,7 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener {
 
     /**
      * 大图预览
-     * <br />外部调用这个api也必须设置{@link #setAutoDisplayNineImg(boolean, Activity)}
+     * <br />外部调用这个api也必须设置{@link #setClickAutoDisplayNineImg(boolean, Activity)}
      * <br />不使用{{@link DisplayNineImgActivity}可以替换掉该方法
      *
      * @param data
@@ -366,6 +386,29 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener {
         fromContext.overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
     }
 
+    public NineImg setDisplayNineImgSaveListener(OnDisplayNineImgSaveListener listener) {
+        this.onDisplayNineImgSaveListener = listener;
+        return this;
+    }
+
+    //</editor-fold>
+    //<editor-fold desc="disPlayerNineImgActivity response interface">
+
+    @Override
+    public ImageView createView(Context context) {
+        return smallDisplayNineImgLoaderInterface.createView(context);
+    }
+
+    @Override
+    public void displayImage(Context context, String url, ImageView imageView) {
+        smallDisplayNineImgLoaderInterface.displayImage(context, url, imageView);
+    }
+
+    @Override
+    public void saveReturn(String imgUrl) {
+        if (null != onDisplayNineImgSaveListener)
+            onDisplayNineImgSaveListener.displayNineImgIsSave(imgUrl);
+    }
     //</editor-fold>
     //<editor-fold desc="adapter">
 
@@ -378,9 +421,16 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             if (0 != width) {
+                if (null == holder.itemView.getLayoutParams()) {
+                    holder.itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                } else {
+
+                }
                 holder.itemView.getLayoutParams().height = (int) ((width - (((getColumn() - 1) * dividerSize))) / (autoSize && getColumn() == 1 ? 2.1f : 3));
                 holder.itemView.getLayoutParams().width = (int) ((width - (((getColumn() - 1) * dividerSize))) / (autoSize && getColumn() == 1 ? 2.5f : 3));
                 holder.itemView.setLayoutParams(holder.itemView.getLayoutParams());
+            } else {
+
             }
             if (addPlusItem && data.size() - 1 == position && TextUtils.isEmpty(data.get(position))) {
                 plusItemLoadListener.onPlusItemLoader(getContext(), holder);
@@ -410,25 +460,6 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener {
             return data.size();
         }
     }
-
-    public interface OnPlusItemLoaderListener {
-        /**
-         * + 模块的
-         *
-         * @param context
-         * @param viewHolder
-         */
-        void onPlusItemLoader(Context context, RecyclerView.ViewHolder viewHolder);
-
-        /**
-         * + 模块的点击事件
-         *
-         * @param context
-         */
-        void onPlusItemClick(Context context);
-    }
-
-    private OnPlusItemLoaderListener plusItemLoadListener;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 

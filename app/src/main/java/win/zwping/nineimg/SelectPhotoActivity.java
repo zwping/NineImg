@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -24,7 +23,8 @@ import java.util.ArrayList;
 
 import win.zwping.nineimg_lib.DisplayNineImgActivity;
 import win.zwping.nineimg_lib.NineImg;
-import win.zwping.nineimg_lib.i.OnChildItemClickListener;
+import win.zwping.nineimg_lib.listener.OnChildItemClickListener;
+import win.zwping.nineimg_lib.listener.OnPlusItemLoaderListener;
 
 public class SelectPhotoActivity extends AppCompatActivity {
 
@@ -39,11 +39,10 @@ public class SelectPhotoActivity extends AppCompatActivity {
 
         imagePickerConfig();
 
-        NineImg.setNineImgLoader(new NineImgInterface.SelectPicNineImgLoader());
-        DisplayNineImgActivity.setLoaderInterface(new NineImgInterface.SelectPicDisplayNineImgLoader());
-
         data = new ArrayList<>();
         nineImg
+                .setNineImgLoader(new NineImgInterface.SelectPicNineImgLoader())
+                .setDisplayNineImgLoader(new NineImgInterface.SelectPicDisplayNineImgLoader())
                 .setWidth(getResources().getDisplayMetrics().widthPixels)
 //                .setOnItemClickListener()
 //                .setOnEmptyItemClickListener()
@@ -55,7 +54,7 @@ public class SelectPhotoActivity extends AppCompatActivity {
                     }
                 })
                 .setClickAutoDisplayNineImg(true, this)
-                .setAddPlusItem(true, 9, new NineImg.OnPlusItemLoaderListener() {
+                .setAddPlusItem(true, 9, new OnPlusItemLoaderListener() {
                     @Override
                     public void onPlusItemLoader(Context context, RecyclerView.ViewHolder viewHolder) {
                         viewHolder.itemView.findViewById(R.id.exit).setVisibility(View.GONE);

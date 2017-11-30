@@ -14,24 +14,7 @@ import win.zwping.nineimg_lib.NineImg;
  * <p>    note：
  * <p> @author：zwp on 2017/10/24 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
-public interface DisplayNineImgLoaderInterface extends Serializable {
-
-    /**
-     * 创建viewPager中的每一张图片
-     *
-     * @param context
-     * @return
-     */
-    ImageView createView(Context context);
-
-    /**
-     * 展示图片
-     *
-     * @param context
-     * @param url
-     * @param imageView
-     */
-    void displayImage(Context context, String url, ImageView imageView);
+public interface DisplayNineImgLoaderInterface extends SmallDisplayNineImgLoaderInterface {
 
     /**
      * 保存回执
