@@ -34,8 +34,9 @@ public class NineImgInterface {
         public View createView(ViewGroup parent) {
             PImageView pImageView = new PImageView(parent.getContext());
             pImageView.showGifFlag();
-            pImageView.setTransitionImg();
+//            pImageView.setTransitionImg();
             pImageView.setPlaceholder(R.mipmap.error_picture, R.mipmap.error_picture);
+//            pImageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             return pImageView;
 //            return LayoutInflater.from(parent.getContext()).inflate(R.layout.item_small_nine_img_layout, parent, false);
         }
