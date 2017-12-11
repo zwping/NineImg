@@ -106,6 +106,8 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
     //<editor-fold desc="内部方法">
 
     private void initView(AttributeSet attrs) {
+        setFocusableInTouchMode(false); //去除嵌套引发自动获取焦点的bug
+        requestFocus();
         if (null == adapter) {
             data = new ArrayList<>();
             adapter = new Adapter();
