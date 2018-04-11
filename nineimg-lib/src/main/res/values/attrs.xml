@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NineImg">
+        <attr name="column" format="integer" /> <!--列数 默认3列-->
+        <attr name="dividerSize" format="dimension" /> <!--行列间距-分割线 默认2dp-->
+        <attr name="maxItem" format="integer" /><!--最大数量 默认不限制-->
+        <attr name="enablePlusItem" format="boolean" /> <!--是否启用+模块 需要对应的定义loader loadPlusItemView-->
+        <attr name="enableOpenDisplayNineImg" format="boolean" /> <!--是否设置点击打开大图 默认关闭-->
+        <attr name="enableDisplayNineImgSave" format="boolean" /> <!--是否启用展示大图中保存的功能 需要定义对应的loader -->
+    </declare-styleable>
+
+</resources>

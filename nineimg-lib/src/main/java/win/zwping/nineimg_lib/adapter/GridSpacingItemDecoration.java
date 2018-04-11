@@ -1,4 +1,4 @@
-package win.zwping.nineimg_lib.view;
+package win.zwping.nineimg_lib.adapter;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
