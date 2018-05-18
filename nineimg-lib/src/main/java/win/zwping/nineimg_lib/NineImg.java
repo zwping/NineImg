@@ -139,7 +139,7 @@ public class NineImg extends RecyclerView {
         boolean maxJudge = maxItem == 0 || maxItem > data.size();
         boolean plusItemJudge = data.size() == 0 || !TextUtils.isEmpty(data.get(data.size() - 1));
         if (enablePlusItem && maxJudge && plusItemJudge) {
-            System.out.println("NineImg.class 增加了占位符");
+            //System.out.println("NineImg.class 增加了占位符");
             data.add("");
             return true;
         }

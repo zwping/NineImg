@@ -51,10 +51,8 @@ public class NineImgAdapter extends RecyclerView.Adapter<NineImgViewHolder> {
         }
         //加载视图，注意一些控制需要成对出现
         if (nineImg.enablePlusItem && nineImg.data.size() - 1 == position && TextUtils.isEmpty(nineImg.data.get(position))) {
-            System.out.println("222222222222222222222222222222222222");
             nineImg.getLoader().loadPlusItemView(nineImg.getContext(), holder);
         } else {
-            System.out.println("111111111111111111111111111111111111");
             nineImg.getLoader().loadItemView(nineImg.getContext(), holder, nineImg.data.get(position));
         }
 
