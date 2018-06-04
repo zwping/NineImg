@@ -4,6 +4,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -76,6 +77,19 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
+    }
+
+    /*** 解决ArrayIndexOutOfBoundsException 与 IllegalArgumentException：pointerIndex out of range的问题 Issues：https://github.com/panpf/sketch/issues/29 ***/
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result = true;
+        try {
+            result = super.dispatchTouchEvent(ev);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
     //</editor-fold>
     //<editor-fold desc="viewPager">
