@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<win.zwping.plib.frame.review.OverScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,42 +7,67 @@
     android:orientation="vertical"
     tools:context="win.zwping.nineimg.MainActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:background="#999"
-            android:onClick="OnClick1"
-            android:text="微信朋友圈相册" />
+            android:orientation="vertical">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:background="#999"
-            android:onClick="OnClick2"
-            android:text="拍照选择" />
+            <win.zwping.nineimg_lib.NineImg
+                android:id="@+id/nine_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:background="#999"
-            android:enabled="false"
-            android:text="流式布局(开发中...)" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:background="#999"
+                android:enabled="false"
+                android:text="流式布局(开发中...)"
+                android:visibility="gone" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="400dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#DE7D2C"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="一行代码实现9图功能"
+                android:textColor="#fff"
+                android:textSize="12sp" />
 
-        <win.zwping.nineimg_lib.NineImg
-            android:id="@+id/nine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-</ScrollView>
+            <win.zwping.nineimg_lib.NineImg
+                android:id="@+id/simple_nine_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#DE7D2C"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="标准用法"
+                android:textColor="#fff"
+                android:textSize="12sp" />
+
+            <win.zwping.nineimg_lib.NineImg
+                android:id="@+id/standard_nine_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                app:column="3"
+                app:dividerSize="10dp"
+                app:enableDisplayNineImgSave="true"
+                app:enableOpenDisplayNineImg="true"
+                app:enablePlusItem="true"
+                app:maxItem="9" />
+
+        </LinearLayout>
+    </ScrollView>
+</win.zwping.plib.frame.review.OverScrollView>

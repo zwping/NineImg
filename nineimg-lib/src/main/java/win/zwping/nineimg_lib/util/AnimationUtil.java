@@ -1,4 +1,4 @@
-package win.zwping.nineimg_lib.animation;
+package win.zwping.nineimg_lib.util;
 
 import android.view.View;
 import android.view.animation.Animation;

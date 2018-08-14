@@ -4,17 +4,18 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
-import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
+import win.zwping.nineimg_lib.listener.OnNineImgListener;
+import win.zwping.nineimg_lib.loader.OnNineImgLoader;
 
 
 /**
@@ -26,35 +27,43 @@ import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
 public class DisplayNineImgActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     //<editor-fold desc="内部参数">
+
     private ViewPager viewPager;
     private TextView textView;
 
     private List<String> list;
     private int position;
+    /*** 是否启用长按保存功能 ***/
+    private boolean saveState;
 
     /**
      * 长按显示保存的dialog
      */
     private SaveDialog saveDialog;
+
+    /*** 子项单例 ***/
+    public static OnNineImgLoader loader;
+    public static OnNineImgListener listener;
     //</editor-fold>
     //<editor-fold desc="全局静态参数">
 
-    public static DisplayNineImgLoaderInterface loaderInterface;
     //</editor-fold>
     //<editor-fold desc="内部方法">
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (null == loaderInterface)
-            throw new RuntimeException("请预先设置displayNineImgActivity图片加载接口【DisplayNineImgLoaderInterface】");
-         /*set it to be no title*/
+        /*set it to be no title*/
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-         /*set it to be full screen*/
+        /*set it to be full screen*/
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_display_nine_img);
         position = getIntent().getExtras().getInt("currentPosition");
         list = getIntent().getExtras().getStringArrayList("list");
+        saveState = getIntent().getExtras().getBoolean("saveState");
+        if (null == loader || null == loader.createDisplayView(this)) {
+            throw new IllegalStateException("Un Set DisplayNineImgLoader");
+        }
 
         viewPager = findViewById(R.id.viewpager);
         textView = findViewById(R.id.number);
@@ -62,7 +71,6 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(position);
         viewPager.addOnPageChangeListener(this);
-
     }
 
     @Override
@@ -70,11 +78,17 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
         super.finish();
         overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
     }
-    //</editor-fold>
-    //<editor-fold desc="API">
 
-    public static void setLoaderInterface(DisplayNineImgLoaderInterface imgLoaderInterface) {
-        loaderInterface = imgLoaderInterface;
+    /*** 解决ArrayIndexOutOfBoundsException 与 IllegalArgumentException：pointerIndex out of range的问题 Issues：https://github.com/panpf/sketch/issues/29 ***/
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean result = true;
+        try {
+            result = super.dispatchTouchEvent(ev);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
     //</editor-fold>
     //<editor-fold desc="viewPager">
@@ -97,28 +111,30 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-            ImageView imageView = loaderInterface.createView(DisplayNineImgActivity.this);
-            loaderInterface.displayImage(DisplayNineImgActivity.this, list.get(position), imageView);
-            imageView.setOnClickListener(new View.OnClickListener() {
+            View view = loader.createDisplayView(DisplayNineImgActivity.this);
+            loader.loadDisplayView(DisplayNineImgActivity.this, list.get(position), view);
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     finish();
                 }
             });
-            imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (null == saveDialog) {
-                        saveDialog = SaveDialog.newInstance(list.get(position));
+            if (saveState && null != listener) {
+                view.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        if (null == saveDialog) {
+                            saveDialog = SaveDialog.newInstance(list.get(position));
+                        }
+                        if (!saveDialog.isAdded()) {
+                            saveDialog.show(getSupportFragmentManager(), "saveDialog");
+                        }
+                        return true;
                     }
-                    if (!saveDialog.isAdded()) {
-                        saveDialog.show(getSupportFragmentManager(), "saveDialog");
-                    }
-                    return true;
-                }
-            });
-            container.addView(imageView);
-            return imageView;
+                });
+            }
+            container.addView(view);
+            return view;
         }
     };
     //<editor-fold desc="viewPager切换监听">

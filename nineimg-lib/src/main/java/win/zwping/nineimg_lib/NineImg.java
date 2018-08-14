@@ -3,29 +3,23 @@ package win.zwping.nineimg_lib;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.SparseArray;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-import win.zwping.nineimg_lib.i.DisplayNineImgLoaderInterface;
-import win.zwping.nineimg_lib.i.NineImgLoaderInterface;
-import win.zwping.nineimg_lib.i.SmallDisplayNineImgLoaderInterface;
-import win.zwping.nineimg_lib.listener.OnChildItemClickListener;
-import win.zwping.nineimg_lib.listener.OnDisplayNineImgSaveListener;
-import win.zwping.nineimg_lib.listener.OnEmptyItemClickListener;
-import win.zwping.nineimg_lib.listener.OnItemClickListener;
-import win.zwping.nineimg_lib.listener.OnPlusItemLoaderListener;
-import win.zwping.nineimg_lib.listener.RecyclerViewItemTouchListener;
-import win.zwping.nineimg_lib.view.GridSpacingItemDecoration;
+import win.zwping.nineimg_lib.adapter.NineImgAdapter;
+import win.zwping.nineimg_lib.listener.OnNineImgListener;
+import win.zwping.nineimg_lib.adapter.RecyclerViewItemTouchListener;
+import win.zwping.nineimg_lib.loader.OnNineImgLoader;
+import win.zwping.nineimg_lib.adapter.GridSpacingItemDecoration;
+import win.zwping.nineimg_lib.util.Utils;
 
 /**
  * <p>describe：使用recyclerView使用9图功能
@@ -34,7 +28,7 @@ import win.zwping.nineimg_lib.view.GridSpacingItemDecoration;
  * <p>    note：
  * <p> @author：zwp on 2017/11/20 0020 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
-public class NineImg extends RecyclerView implements OnEmptyItemClickListener, DisplayNineImgLoaderInterface {
+public class NineImg extends RecyclerView {
 
     //<editor-fold desc="构造函数">
 
@@ -55,62 +49,57 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
     //</editor-fold>
     //<editor-fold desc="内部参数">
 
-    private Adapter adapter;
-    private ArrayList<String> data;
-    /**
-     * 外部传入该控件的宽度，避免内部重复计算
-     */
-    private float width;
-
-    /**
-     * 自动设置图片大小（根据图片数量设置图片的宽高，默认为1/3宽度）
-     */
-    private boolean autoSize;
-    /**
-     * 分割线的大小
-     */
-    private int dividerSize = 2;
-    /**
-     * 最大item数量
-     */
+    private NineImgAdapter adapter;
+    /*** 加载的资源集合 可能包含占位数据 最终数据请根据这个方法获取{@link #getCurrentData()} ***/
+    public ArrayList<String> data;
+    /*** 固定9图的列数 ***/
+    private int column;
+    /*** 分割线的大小 ***/
+    public int dividerSize;
+    /*** 最大item数量 ***/
     private int maxItem;
-    /**
-     * 是否增加+栏目（适用于相片选择增加）
-     */
-    private boolean addPlusItem;
+    /*** 是否增加+栏目（适用于相片选择增加） ***/
+    public boolean enablePlusItem;
 
-    /**
-     * + item Resource
-     */
-    private int plusItemResource;
+    /*** 是否启用展示9图 ***/
+    public boolean enableOpenDisplayNineImg;
+    /*** 是否启用展示9图中保存的功能 ***/
+    private boolean enableDisplayNineImgSave;
 
-    private OnItemClickListener onItemClickListener;
-    private OnChildItemClickListener onChildItemClickListener;
-    private OnEmptyItemClickListener emptyItemClickListener;
-    /**
-     * 展示大图
-     */
-    private boolean displayNineImg;
-    /**
-     * 针对+item对应的监听
-     */
-    private OnPlusItemLoaderListener plusItemLoadListener;
+    /*** 加载器 ***/
+    private OnNineImgLoader loader;
+    /*** Listener ***/
+    private OnNineImgListener listener;
 
-    private OnDisplayNineImgSaveListener onDisplayNineImgSaveListener;
-
-    //</editor-fold>
-    //<editor-fold desc="全局静态参数">
-
-    public static NineImgLoaderInterface loaderInterface;
     //</editor-fold>
     //<editor-fold desc="内部方法">
 
     private void initView(AttributeSet attrs) {
-        setFocusableInTouchMode(false); //去除嵌套引发自动获取焦点的bug
+        //去除嵌套引发自动获取焦点的bug
+        setFocusableInTouchMode(false);
         requestFocus();
+
+        if (null != attrs) {
+            TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.NineImg);
+            try {
+                column = array.getInt(R.styleable.NineImg_column, 3);
+                dividerSize = array.getDimensionPixelSize(R.styleable.NineImg_dividerSize, Utils.spToPx(getContext(), 2));
+                maxItem = array.getInt(R.styleable.NineImg_maxItem, 0);
+                enablePlusItem = array.getBoolean(R.styleable.NineImg_enablePlusItem, false);
+                enableOpenDisplayNineImg = array.getBoolean(R.styleable.NineImg_enableOpenDisplayNineImg, false);
+                enableDisplayNineImgSave = array.getBoolean(R.styleable.NineImg_enableDisplayNineImgSave, false);
+            } finally {
+                array.recycle();
+            }
+        }
+
+        data = new ArrayList<>();
+    }
+
+    /*** 更新adapter ***/
+    private void notifyData() {
         if (null == adapter) {
-            data = new ArrayList<>();
-            adapter = new Adapter();
+            adapter = new NineImgAdapter(this);
             setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
                 @Override
                 public boolean canScrollVertically() {
@@ -119,25 +108,9 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
             });
             addItemDecoration(new GridSpacingItemDecoration(getColumn(), dividerSize, false));
             setAdapter(adapter);
-            addOnItemTouchListener(new RecyclerViewItemTouchListener(this, this));
+            //通过touch监听获取到空白区域的点击事件
+            addOnItemTouchListener(new RecyclerViewItemTouchListener(this, getListener()));
         } else {
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    /**
-     * 获取当前列数(当前模式为1 item和多个 item的区别，多个item默认3列)
-     */
-    private int getColumn() {
-        int size = data.size();
-        return autoSize ? size == 1 ? 1 : 3 : 3;
-    }
-
-    /**
-     * 更新adapter
-     */
-    private void notifyData() {
-        if (null != adapter) {
             removeItemDecoration(getItemDecorationAt(0));
             addItemDecoration(new GridSpacingItemDecoration(getColumn(), dividerSize, false));
             setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
@@ -150,9 +123,7 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
         }
     }
 
-    /**
-     * 截取data最大数量
-     */
+    /*** 截取data最大数量 ***/
     private void cutData() {
         if (maxItem != 0 && data.size() > maxItem) {
             ArrayList<String> list = new ArrayList<>();
@@ -163,175 +134,93 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
         }
     }
 
-    /**
-     * 增加假数据
-     */
+    /*** 增加假数据 ***/
     private boolean addFalseDataFromPlusItem() {
-        if (addPlusItem && (0 == maxItem || maxItem > data.size()) && (data.size() == 0 || !TextUtils.isEmpty(data.get(data.size() - 1)))) {
-            System.out.println("有加这个吗？");
+        boolean maxJudge = maxItem == 0 || maxItem > data.size();
+        boolean plusItemJudge = data.size() == 0 || !TextUtils.isEmpty(data.get(data.size() - 1));
+        if (enablePlusItem && maxJudge && plusItemJudge) {
+            //System.out.println("NineImg.class 增加了占位符");
             data.add("");
             return true;
         }
         return false;
     }
 
-    //<editor-fold desc="recyclerView gridLayout空白区域点击事件">
-    @Override
-    public void onEmptyItemClick() {  //recyclerView空白区域的点击事件
-        if (null != emptyItemClickListener) {
-            emptyItemClickListener.onEmptyItemClick();
-        } else {
-
-        }
-    }
-    //</editor-fold>
     //</editor-fold>
     //<editor-fold desc="API">
 
-    /**
-     * 设置9图加载模式
-     *
-     * @param loader
-     */
-    public NineImg setNineImgLoader(NineImgLoaderInterface loader) {
-        loaderInterface = loader;
+    /*** 设置9图加载监听 ***/
+    public NineImg setNineImgLoader(OnNineImgLoader loader1) {
+        loader = loader1;
         return this;
     }
 
-    private SmallDisplayNineImgLoaderInterface smallDisplayNineImgLoaderInterface;
-
-    public NineImg setDisplayNineImgLoader(SmallDisplayNineImgLoaderInterface loader) {
-        DisplayNineImgActivity.setLoaderInterface(this);
-        smallDisplayNineImgLoaderInterface = loader;
-        return this;
+    public OnNineImgLoader getLoader() {
+        return loader;
     }
 
-    /**
-     * 设置控件宽度
-     *
-     * @param layoutWidth 控件宽度
-     */
-    public NineImg setWidth(int layoutWidth) {
-        if (null == loaderInterface)
-            throw new RuntimeException("请预先设置nineImg图片加载接口【NineImgLoaderInterface】");
-        // TODO: 2017/11/18 0018 动态获取控件的宽度
-        width = layoutWidth;
-        return this;
-    }
-
-    /**
-     * 设置资源
-     *
-     * @param list
-     */
+    /*** 设置资源 ***/
     public NineImg setList(ArrayList<String> list) {
+        data = new ArrayList<>();
         data = list;
         return this;
     }
 
-    /**
-     * 增加资源
-     *
-     * @param list
-     */
+    /*** 增加资源 ***/
     public NineImg addList(ArrayList<String> list) {
         data.addAll(0, list);
         return this;
     }
 
-    /**
-     * 根据图片数量，自动调整图片大小
-     * <br />控制列数{@link #getColumn()}
-     *
-     * @param autoSize
-     */
-    public NineImg setAutoSize(boolean autoSize) {
-        this.autoSize = autoSize;
+    /*** Builder初始化 ***/
+    public void init() {
+        cutData();
+        addFalseDataFromPlusItem();
+        post(new Runnable() {
+            @Override
+            public void run() {
+                notifyData();
+            }
+        });
+    }
+
+    /*** 设置9图相关的监听 ***/
+    public NineImg setNineImgListener(OnNineImgListener listener1) {
+        listener = listener1;
         return this;
     }
 
-    /**
-     * 设置item的监听事件
-     *
-     * @param listener
-     */
-    public NineImg setOnItemClickListener(OnItemClickListener listener) {
-        this.onItemClickListener = listener;
+    public OnNineImgListener getListener() {
+        return listener;
+    }
+
+    /*** 设置9图的列数，不真真真的是9张图 ***/
+    public NineImg setColumn(int c) {
+        this.column = c;
         return this;
     }
 
-    /**
-     * 设置子控件的监听
-     *
-     * @param listener
-     */
-    public NineImg setOnChildItemClickListener(OnChildItemClickListener listener) {
-        this.onChildItemClickListener = listener;
-        return this;
-    }
-
-    /**
-     * GridLayoutManager的recyclerView中空白区域点击监听
-     *
-     * @param listener
-     */
-    public NineImg setOnEmptyItemClickListener(OnEmptyItemClickListener listener) {
-        this.emptyItemClickListener = listener;
-        return this;
-    }
-
-    /**
-     * 大图显示模式
-     *
-     * @param displayBigImg
-     */
-    public NineImg setClickAutoDisplayNineImg(boolean displayBigImg) {
-        this.displayNineImg = displayBigImg;
-        return this;
-    }
-
-    /**
-     * 设置子控件之间的间距
-     *
-     * @param px
-     */
-    public NineImg setLineWidth(int px) {
+    /*** 设置子控件之间的间距 ***/
+    public NineImg setDividerSize(int px) {
         this.dividerSize = px;
         return this;
     }
 
-    /**
-     * 设置9图最大显示数量
-     *
-     * @param max
-     * @return
-     */
+    /*** 设置9图最大显示数量 ***/
     public NineImg setMaxItem(int max) {
         this.maxItem = max;
         return this;
     }
 
-    /**
-     * 设置添加+ item
-     *
-     * @param addPlusItem
-     * @param max
-     * @return
-     */
-    public NineImg setAddPlusItem(boolean addPlusItem, int max, OnPlusItemLoaderListener plusItemLoadListener) {
-        setMaxItem(max);
-        this.plusItemLoadListener = plusItemLoadListener;
-        this.addPlusItem = addPlusItem;
+    /*** 设置添加+ item ***/
+    public NineImg setAddPlusItem(boolean enablePlusItem) {
+        this.enablePlusItem = enablePlusItem;
         return this;
     }
 
-    /**
-     * 获取当前9图中剩余的数据
-     *
-     * @return
-     */
+    /*** 获取当前9图中剩余的数据集合 ***/
     public ArrayList<String> getCurrentData() {
-        if (addPlusItem && TextUtils.isEmpty(data.get(data.size() - 1))) {
+        if (enablePlusItem && TextUtils.isEmpty(data.get(data.size() - 1))) {
             ArrayList<String> list = new ArrayList<>();
             for (int i = 0; i < data.size(); i++) {
                 if (i != data.size() - 1) {
@@ -344,160 +233,57 @@ public class NineImg extends RecyclerView implements OnEmptyItemClickListener, D
         }
     }
 
-    /**
-     * 更新数据，如果紧紧配置，可以不调用
-     *
-     * @return
-     */
-    public NineImg init() {
-        cutData();
-        addFalseDataFromPlusItem();
-        notifyData();
-        return this;
+    /*** 获取当前列数(当前模式为1 item和多个 item的区别，多个item默认3列) ***/
+    public int getColumn() {
+        return data.size() == 1 ? 1 : column;
     }
 
-    /**
-     * 去除某个item
-     *
-     * @param position
-     */
+    /*** 去除某个item ***/
     public void remove(int position) {
         if (null != adapter && position < data.size()) {
             data.remove(position);
             adapter.notifyItemRemoved(position);
         }
-        if (addFalseDataFromPlusItem()) adapter.notifyItemInserted(data.size() - 1);
+        if (addFalseDataFromPlusItem()) {
+            adapter.notifyItemInserted(data.size() - 1);
+        }
+    }
+
+
+    /*** 是否打开显示9图 ***/
+    public NineImg setOpenDisplayNineImg(boolean enableOpenDisplayNineImg) {
+        this.enableOpenDisplayNineImg = enableOpenDisplayNineImg;
+        return this;
+    }
+
+    /*** 是否启用展示9图中保存的功能 ***/
+    public NineImg setEnableDisplayNineImgSave(boolean enableDisplayNineImgSave) {
+        this.enableDisplayNineImgSave = enableDisplayNineImgSave;
+        return this;
     }
 
     /**
      * 大图预览
-     * <br />外部调用这个api也必须设置{@link #setClickAutoDisplayNineImg(boolean)}
-     * <br />不使用{{@link DisplayNineImgActivity}可以替换掉该方法
+     * <br />外部调用这个api也必须设置{@link #setOpenDisplayNineImg(boolean)} }
+     * <br />不使用框架自带的{{@link DisplayNineImgActivity}可以替换掉该方法
      *
      * @param data
      * @param position
      */
     public void displayNineImg(ArrayList<String> data, int position) {
+        DisplayNineImgActivity.loader = loader;
+        DisplayNineImgActivity.listener = listener;
+
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("list", data);
         bundle.putInt("currentPosition", position);
+        bundle.putBoolean("saveState", enableDisplayNineImgSave);
+
         Intent intent = new Intent(getContext(), DisplayNineImgActivity.class);
         intent.putExtras(bundle);
         ((Activity) getContext()).startActivity(intent);
         ((Activity) getContext()).overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
     }
 
-    public NineImg setDisplayNineImgSaveListener(OnDisplayNineImgSaveListener listener) {
-        this.onDisplayNineImgSaveListener = listener;
-        return this;
-    }
-
-    //</editor-fold>
-    //<editor-fold desc="disPlayerNineImgActivity response interface">
-
-    @Override
-    public ImageView createView(Context context) {
-        return smallDisplayNineImgLoaderInterface.createView(context);
-    }
-
-    @Override
-    public void displayImage(Context context, String url, ImageView imageView) {
-        smallDisplayNineImgLoaderInterface.displayImage(context, url, imageView);
-    }
-
-    @Override
-    public void saveReturn(String imgUrl) {
-        if (null != onDisplayNineImgSaveListener)
-            onDisplayNineImgSaveListener.displayNineImgIsSave(imgUrl);
-    }
-    //</editor-fold>
-    //<editor-fold desc="adapter">
-
-    private class Adapter extends RecyclerView.Adapter<ViewHolder> {
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(loaderInterface.createView(parent));
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            if (0 != width) {
-                if (null == holder.itemView.getLayoutParams()) {
-                    holder.itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                } else {
-
-                }
-                holder.itemView.getLayoutParams().height = (int) ((width - (((getColumn() - 1) * dividerSize))) / (autoSize && getColumn() == 1 ? 2.1f : 3));
-                holder.itemView.getLayoutParams().width = (int) ((width - (((getColumn() - 1) * dividerSize))) / (autoSize && getColumn() == 1 ? 2.5f : 3));
-                holder.itemView.setLayoutParams(holder.itemView.getLayoutParams());
-            } else {
-
-            }
-            if (addPlusItem && data.size() - 1 == position && TextUtils.isEmpty(data.get(position))) {
-                plusItemLoadListener.onPlusItemLoader(getContext(), holder);
-            } else {
-                loaderInterface.displayImage(getContext(), holder, data.get(position));
-            }
-            holder.itemView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (addPlusItem && data.size() - 1 == holder.getAdapterPosition() && TextUtils.isEmpty(data.get(holder.getAdapterPosition()))) {
-                        plusItemLoadListener.onPlusItemClick(getContext());
-                    } else {
-                        if (null != onItemClickListener) {
-                            onItemClickListener.onItemClick(holder, getCurrentData());
-                        } else if (displayNineImg) {
-                            displayNineImg(getCurrentData(), holder.getAdapterPosition());
-                        } else {
-
-                        }
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return data.size();
-        }
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        private SparseArray<View> mViews;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            mViews = new SparseArray<>();
-        }
-
-        public ViewHolder addOnClickListener(final int viewId) {
-            final View view = getView(viewId);
-            if (view != null) {
-                if (!view.isClickable()) {
-                    view.setClickable(true);
-                }
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (onChildItemClickListener != null) {
-                            onChildItemClickListener.onChildItemClick(v, getAdapterPosition());
-                        }
-                    }
-                });
-            }
-            return this;
-        }
-
-        public <T extends View> T getView(int viewId) {
-            View view = mViews.get(viewId);
-            if (view == null) {
-                view = itemView.findViewById(viewId);
-                mViews.put(viewId, view);
-            }
-            return (T) view;
-        }
-
-    }
     //</editor-fold>
 }

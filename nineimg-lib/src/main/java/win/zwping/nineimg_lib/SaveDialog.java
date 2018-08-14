@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,13 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
 
-import win.zwping.nineimg_lib.animation.AnimationUtil;
+import win.zwping.nineimg_lib.listener.OnNineImgListener;
+import win.zwping.nineimg_lib.util.AnimationUtil;
 
 /**
- * <p>describe：9图展示中保存图片的dialog
+ * <p>describe：9图大图展示时，长按弹出的默认dialog
  * <p>    note：
  * <p> @author：zwp on 2017/11/28 0028 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */
@@ -71,7 +69,7 @@ public class SaveDialog extends DialogFragment {
         view.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DisplayNineImgActivity.loaderInterface.saveReturn(imgUrl);
+                DisplayNineImgActivity.listener.onDisplayNineImgIsSave(imgUrl);
                 slideDown();
             }
         });
