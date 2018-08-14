@@ -88,7 +88,6 @@ public class DisplayNineImgActivity extends AppCompatActivity implements ViewPag
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-
         return result;
     }
     //</editor-fold>

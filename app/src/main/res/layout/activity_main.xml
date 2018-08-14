@@ -16,6 +16,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <win.zwping.nineimg_lib.NineImg
+                android:id="@+id/nine_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,8 +59,8 @@
                 android:id="@+id/standard_nine_img"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 app:column="3"
                 app:dividerSize="10dp"
                 app:enableDisplayNineImgSave="true"

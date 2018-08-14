@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <win.zwping.plib.frame.review.PImageView
+        android:id="@+id/head_img_piv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintBottom_toTopOf="@id/name_tv"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/right_iv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:processorType="circle" />
+
+    <ImageView
+        android:id="@+id/clear_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_clear_black_24dp"
+        app:layout_constraintRight_toRightOf="@id/head_img_piv"
+        app:layout_constraintTop_toTopOf="@id/head_img_piv" />
+
+    <TextView
+        android:id="@+id/name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="詹詹"
+        android:textColor="#333"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/head_img_piv"
+        app:layout_constraintRight_toRightOf="@id/head_img_piv"
+        app:layout_constraintTop_toBottomOf="@id/head_img_piv" />
+
+    <ImageView
+        android:id="@+id/right_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:src="@mipmap/rightt_icon"
+        app:layout_constraintBottom_toBottomOf="@id/head_img_piv"
+        app:layout_constraintLeft_toRightOf="@id/head_img_piv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/head_img_piv" />
+
+
+</android.support.constraint.ConstraintLayout>

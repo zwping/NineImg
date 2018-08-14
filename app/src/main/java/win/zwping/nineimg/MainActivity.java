@@ -4,14 +4,18 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import win.zwping.nineimg.config.NineImgConfig;
 import win.zwping.nineimg_lib.NineImg;
+import win.zwping.nineimg_lib.adapter.NineImgAdapter;
 import win.zwping.nineimg_lib.adapter.NineImgViewHolder;
 import win.zwping.nineimg_lib.listener.OnNineImgListener;
 import win.zwping.nineimg_lib.loader.OnNineImgLoader;
@@ -22,6 +26,8 @@ import win.zwping.plib.natives.utils.ToastUtils;
 public class MainActivity extends AppCompatActivity {
 
     NineImg simple, standard;
+
+    NineImg nineImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +40,28 @@ public class MainActivity extends AppCompatActivity {
         simple();
 
         standard();
+
+
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add("111");
+        }
+        nineImg = findViewById(R.id.nine_img);
+        nineImg.setColumn(4).setNineImgLoader(new OnNineImgLoader() {
+            @Override
+            public View createItemView(ViewGroup parent) {
+                return LayoutInflater.from(MainActivity.this).inflate(R.layout.item_nine_img_view, parent, false);
+            }
+
+            @Override
+            public void loadItemView(Context context, NineImgViewHolder holder, String url) {
+
+            }
+        }).setList(list).init();
+
+
     }
+
 
     /*** - 不推荐使用这种方式 建议标准用法{@link #standard()}***/
     private void simple() {

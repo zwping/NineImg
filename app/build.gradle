@@ -45,5 +45,5 @@ dependencies {
 
     //开发工具包
 //    implementation 'win.zwping:PSeries:v1.+'    //获取1.版本的最新版本（建议使用）
-    implementation 'win.zwping:PSeries:master-SNAPSHOT' //获取PSeries的master分支上的快照
+    implementation 'win.zwping:PSeries:1.5.0' //获取PSeries的master分支上的快照
 }
