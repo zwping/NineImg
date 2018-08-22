@@ -66,6 +66,9 @@ public class NineImg extends RecyclerView {
     /*** 是否启用展示9图中保存的功能 ***/
     private boolean enableDisplayNineImgSave;
 
+    /*** 当只有一个Item时,是否展示2.1f 2.5f的宽高 (美化 / plusItem功能) ***/
+    private boolean oneBeautify;
+
     /*** 加载器 ***/
     private OnNineImgLoader loader;
     /*** Listener ***/
@@ -88,6 +91,7 @@ public class NineImg extends RecyclerView {
                 enablePlusItem = array.getBoolean(R.styleable.NineImg_enablePlusItem, false);
                 enableOpenDisplayNineImg = array.getBoolean(R.styleable.NineImg_enableOpenDisplayNineImg, false);
                 enableDisplayNineImgSave = array.getBoolean(R.styleable.NineImg_enableDisplayNineImgSave, false);
+                oneBeautify = array.getBoolean(R.styleable.NineImg_enableOneBeautify, false);
             } finally {
                 array.recycle();
             }
@@ -235,7 +239,18 @@ public class NineImg extends RecyclerView {
 
     /*** 获取当前列数(当前模式为1 item和多个 item的区别，多个item默认3列) ***/
     public int getColumn() {
-        return data.size() == 1 ? 1 : column;
+        return !getOneBeautify() && data.size() == 1 ? 1 : column;
+    }
+
+    /*** 获取当前只有一张图时是否美化 ***/
+    public boolean getOneBeautify() {
+        return enablePlusItem || oneBeautify;
+    }
+
+    /*** 设置当前只有一张图时是否美化 ***/
+    public NineImg setOneBeautify(boolean b) {
+        this.oneBeautify = b;
+        return this;
     }
 
     /*** 去除某个item ***/

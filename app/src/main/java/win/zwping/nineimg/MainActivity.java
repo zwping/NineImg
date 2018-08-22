@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             list.add("111");
         }
         nineImg = findViewById(R.id.nine_img);
@@ -55,9 +55,30 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void loadItemView(Context context, NineImgViewHolder holder, String url) {
+                holder.addChildViewClickListener(R.id.clear_iv);
+            }
+
+            @Override
+            public void loadPlusItemView(Context context, NineImgViewHolder holder) {
+                super.loadPlusItemView(context, holder);
+                ((PImageView) holder.getView(R.id.head_img_piv)).displayResourceImage(R.mipmap.add_icon);
+                holder.getView(R.id.clear_iv).setVisibility(View.GONE);
+                holder.getView(R.id.name_tv).setVisibility(View.GONE);
+                holder.getView(R.id.temp_rl).setVisibility(View.GONE);
+            }
+
+        }).setList(list).setAddPlusItem(true).setNineImgListener(new OnNineImgListener() {
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder holder, ArrayList<String> data) {
 
             }
-        }).setList(list).init();
+
+            @Override
+            public void onChildItemClick(View view, int position) {
+                super.onChildItemClick(view, position);
+                nineImg.remove(position);
+            }
+        }).init();
 
 
     }
