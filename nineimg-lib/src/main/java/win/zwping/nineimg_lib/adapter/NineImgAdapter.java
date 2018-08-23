@@ -10,6 +10,7 @@ import win.zwping.nineimg_lib.NineImg;
 
 /**
  * <p>describe：9图专属Adapter
+ * <p>    note：对数据的控制均需要成对的出现{@link win.zwping.nineimg_lib.loader.OnNineImgLoader}
  * <p>    note：
  * <p> @author：zwp on 2018/4/10 0010 mail：1101558280@qq.com web: http://www.zwping.win </p>
  */

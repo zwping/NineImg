@@ -101,7 +101,7 @@ public class NineImg extends RecyclerView {
     }
 
     /*** 更新adapter ***/
-    private void notifyData() {
+    public void notifyData() {
         if (null == adapter) {
             adapter = new NineImgAdapter(this);
             setLayoutManager(new GridLayoutManager(getContext(), getColumn()) {
@@ -173,6 +173,12 @@ public class NineImg extends RecyclerView {
     /*** 增加资源 ***/
     public NineImg addList(ArrayList<String> list) {
         data.addAll(0, list);
+        return this;
+    }
+
+    /*** 增加资源 ***/
+    public NineImg addString(String txt) {
+        data.add(txt);
         return this;
     }
 

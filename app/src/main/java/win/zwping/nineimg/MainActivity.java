@@ -8,14 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import win.zwping.nineimg.config.NineImgConfig;
 import win.zwping.nineimg_lib.NineImg;
-import win.zwping.nineimg_lib.adapter.NineImgAdapter;
 import win.zwping.nineimg_lib.adapter.NineImgViewHolder;
 import win.zwping.nineimg_lib.listener.OnNineImgListener;
 import win.zwping.nineimg_lib.loader.OnNineImgLoader;
@@ -28,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     NineImg simple, standard;
 
     NineImg nineImg;
+
+    private boolean hide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         standard();
 
 
-        ArrayList<String> list = new ArrayList<>();
+        final ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             list.add("111");
         }
@@ -50,17 +50,21 @@ public class MainActivity extends AppCompatActivity {
         nineImg.setColumn(4).setNineImgLoader(new OnNineImgLoader() {
             @Override
             public View createItemView(ViewGroup parent) {
-                return LayoutInflater.from(MainActivity.this).inflate(R.layout.item_nine_img_view, parent, false);
+                return LayoutInflater.from(MainActivity.this).inflate(R.layout.item_nine_img_approval_people_view, parent, false);
             }
 
             @Override
             public void loadItemView(Context context, NineImgViewHolder holder, String url) {
+                ((PImageView) holder.getView(R.id.head_img_piv)).displayResourceImage(R.drawable.ic_camera_black_24dp);
+                ((TextView) holder.getView(R.id.name_tv)).setText("占占");
+                ((TextView) holder.getView(R.id.name_tv)).setVisibility(View.VISIBLE);
+                holder.getView(R.id.clear_iv).setVisibility(View.VISIBLE);
+                holder.getView(R.id.temp_rl).setVisibility(hide ? View.GONE : View.VISIBLE);
                 holder.addChildViewClickListener(R.id.clear_iv);
             }
 
             @Override
             public void loadPlusItemView(Context context, NineImgViewHolder holder) {
-                super.loadPlusItemView(context, holder);
                 ((PImageView) holder.getView(R.id.head_img_piv)).displayResourceImage(R.mipmap.add_icon);
                 holder.getView(R.id.clear_iv).setVisibility(View.GONE);
                 holder.getView(R.id.name_tv).setVisibility(View.GONE);
@@ -76,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildItemClick(View view, int position) {
                 super.onChildItemClick(view, position);
-                nineImg.remove(position);
+                hide = !hide;
+                nineImg.setList(list).init();
+//                nineImg.remove(position);
             }
         }).init();
 
