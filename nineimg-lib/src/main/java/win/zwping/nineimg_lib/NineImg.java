@@ -140,6 +140,9 @@ public class NineImg extends RecyclerView {
 
     /*** 增加假数据 ***/
     private boolean addFalseDataFromPlusItem() {
+        if (!enablePlusItem && TextUtils.isEmpty(data.get(data.size() - 1))) { // 先保证非PlusItem的情况下，NineImg没有设置PlusItem
+            data.remove(data.size() - 1);
+        }
         boolean maxJudge = maxItem == 0 || maxItem > data.size();
         boolean plusItemJudge = data.size() == 0 || !TextUtils.isEmpty(data.get(data.size() - 1));
         if (enablePlusItem && maxJudge && plusItemJudge) {
@@ -178,7 +181,7 @@ public class NineImg extends RecyclerView {
 
     /*** 增加资源 ***/
     public NineImg addString(String txt) {
-        data.add(txt);
+        data.add(0, txt);
         return this;
     }
 

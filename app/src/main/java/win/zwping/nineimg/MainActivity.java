@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             list.add("111");
         }
         nineImg = findViewById(R.id.nine_img);
-        nineImg.setColumn(4).setNineImgLoader(new OnNineImgLoader() {
+        nineImg.setColumn(4).setMaxItem(10).setNineImgLoader(new OnNineImgLoader() {
             @Override
             public View createItemView(ViewGroup parent) {
                 return LayoutInflater.from(MainActivity.this).inflate(R.layout.item_nine_img_approval_people_view, parent, false);
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void loadItemView(Context context, NineImgViewHolder holder, String url) {
-                ((PImageView) holder.getView(R.id.head_img_piv)).displayResourceImage(R.drawable.ic_camera_black_24dp);
+                ((PImageView) holder.getView(R.id.head_img_piv)).displayResourceImage(R.mipmap.yanhua);
                 ((TextView) holder.getView(R.id.name_tv)).setText("占占");
                 ((TextView) holder.getView(R.id.name_tv)).setVisibility(View.VISIBLE);
                 holder.getView(R.id.clear_iv).setVisibility(View.VISIBLE);
@@ -80,9 +80,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildItemClick(View view, int position) {
                 super.onChildItemClick(view, position);
-                hide = !hide;
-                nineImg.setList(list).init();
-//                nineImg.remove(position);
+                nineImg.remove(position);
+            }
+
+            @Override
+            public void onPlusItemClick(Context context) {
+                super.onPlusItemClick(context);
+                nineImg.addString("123").init();
             }
         }).init();
 
