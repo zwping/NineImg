@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         final ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 0; i++) {
             list.add("111");
         }
         nineImg = findViewById(R.id.nine_img);

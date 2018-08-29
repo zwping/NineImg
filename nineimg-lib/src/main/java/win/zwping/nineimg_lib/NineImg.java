@@ -21,6 +21,8 @@ import win.zwping.nineimg_lib.loader.OnNineImgLoader;
 import win.zwping.nineimg_lib.adapter.GridSpacingItemDecoration;
 import win.zwping.nineimg_lib.util.Utils;
 
+import static android.text.TextUtils.isEmpty;
+
 /**
  * <p>describe：使用recyclerView使用9图功能
  * <p>    note：实现流式布局
@@ -140,11 +142,11 @@ public class NineImg extends RecyclerView {
 
     /*** 增加假数据 ***/
     private boolean addFalseDataFromPlusItem() {
-        if (!enablePlusItem && TextUtils.isEmpty(data.get(data.size() - 1))) { // 先保证非PlusItem的情况下，NineImg没有设置PlusItem
+        if (!enablePlusItem && data.size() > 0 && isEmpty(data.get(data.size() - 1))) { // 先保证非PlusItem的情况下，NineImg没有设置PlusItem
             data.remove(data.size() - 1);
         }
         boolean maxJudge = maxItem == 0 || maxItem > data.size();
-        boolean plusItemJudge = data.size() == 0 || !TextUtils.isEmpty(data.get(data.size() - 1));
+        boolean plusItemJudge = data.size() == 0 || !isEmpty(data.get(data.size() - 1));
         if (enablePlusItem && maxJudge && plusItemJudge) {
             //System.out.println("NineImg.class 增加了占位符");
             data.add("");
@@ -233,7 +235,7 @@ public class NineImg extends RecyclerView {
 
     /*** 获取当前9图中剩余的数据集合 ***/
     public ArrayList<String> getCurrentData() {
-        if (enablePlusItem && TextUtils.isEmpty(data.get(data.size() - 1))) {
+        if (enablePlusItem && isEmpty(data.get(data.size() - 1))) {
             ArrayList<String> list = new ArrayList<>();
             for (int i = 0; i < data.size(); i++) {
                 if (i != data.size() - 1) {
@@ -248,12 +250,12 @@ public class NineImg extends RecyclerView {
 
     /*** 获取当前列数(当前模式为1 item和多个 item的区别，多个item默认3列) ***/
     public int getColumn() {
-        return !getOneBeautify() && data.size() == 1 ? 1 : column;
+        return getOneBeautify() && data.size() == 1 ? 1 : column;
     }
 
     /*** 获取当前只有一张图时是否美化 ***/
     public boolean getOneBeautify() {
-        return enablePlusItem || oneBeautify;
+        return !enablePlusItem && oneBeautify;
     }
 
     /*** 设置当前只有一张图时是否美化 ***/
