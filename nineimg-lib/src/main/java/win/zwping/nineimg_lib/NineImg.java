@@ -8,17 +8,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-import win.zwping.nineimg_lib.adapter.NineImgAdapter;
-import win.zwping.nineimg_lib.listener.OnNineImgListener;
-import win.zwping.nineimg_lib.adapter.RecyclerViewItemTouchListener;
-import win.zwping.nineimg_lib.loader.OnNineImgLoader;
 import win.zwping.nineimg_lib.adapter.GridSpacingItemDecoration;
+import win.zwping.nineimg_lib.adapter.NineImgAdapter;
+import win.zwping.nineimg_lib.adapter.RecyclerViewItemTouchListener;
+import win.zwping.nineimg_lib.listener.OnNineImgListener;
+import win.zwping.nineimg_lib.loader.OnNineImgLoader;
 import win.zwping.nineimg_lib.util.Utils;
 
 import static android.text.TextUtils.isEmpty;
@@ -83,6 +81,8 @@ public class NineImg extends RecyclerView {
         //去除嵌套引发自动获取焦点的bug
         setFocusableInTouchMode(false);
         requestFocus();
+
+        getItemAnimator().setChangeDuration(0); //禁止刷新闪烁
 
         if (null != attrs) {
             TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.NineImg);
